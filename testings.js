@@ -1,8 +1,8 @@
-import * as THREE from 'node_modules/three/build/three.module.js';
-import { OrbitControls } from 'node_modules/three/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'node_modules/three/examples/jsm/loaders/DRACOLoader.js';
-import {SkeletonUtils} from 'node_modules/three/examples/jsm/utils/SkeletonUtils.js';
+import * as THREE from '/reference/three.module.js';
+import { OrbitControls } from '/reference/OrbitControls.js';
+import { GLTFLoader } from '/reference/GLTFLoader.js';
+import { DRACOLoader } from '/reference/DRACOLoader.js';
+import {SkeletonUtils} from '/reference/SkeletonUtils.js';
 
 console.log("pass");
 
