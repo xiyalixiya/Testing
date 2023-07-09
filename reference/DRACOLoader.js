@@ -3,7 +3,7 @@ import {
 	BufferGeometry,
 	FileLoader,
 	Loader
-} from "../../../build/three.module.js";
+} from "../reference/three.module.js";
 
 var DRACOLoader = function ( manager ) {
 
