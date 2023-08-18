@@ -1,7 +1,7 @@
-import * as THREE from '/reference/three.module.js';
-import { OrbitControls } from '/reference/OrbitControls.js';
-import { GLTFLoader } from '/reference/GLTFLoader.js';
-import {SkeletonUtils} from '/reference/SkeletonUtils.js';
+import * as THREE from '/three.module.js';
+import { OrbitControls } from '/OrbitControls.js';
+import { GLTFLoader } from '/GLTFLoader.js';
+import {SkeletonUtils} from '/SkeletonUtils.js';
 
 const clock = new THREE.Clock();
 
