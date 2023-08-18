@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="613" viewBox="0 0 14 613">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.01" y1="0.5" x2="0.988" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#b4f778"/>
+      <stop offset="0.128" stop-color="#aceabd" stop-opacity="0"/>
+      <stop offset="0.25" stop-color="#a4ddff"/>
+      <stop offset="0.379" stop-color="#d1c5fe" stop-opacity="0"/>
+      <stop offset="0.499" stop-color="#faaffd"/>
+      <stop offset="0.631" stop-color="#fdaeb8" stop-opacity="0"/>
+      <stop offset="0.749" stop-color="#ffad7b"/>
+      <stop offset="0.883" stop-color="#fdd287" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fbf291"/>
+    </linearGradient>
+    <filter id="椭圆_7">
+      <feOffset dx="0.5" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.11" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="椭圆_8">
+      <feOffset dx="0.5" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-2"/>
+      <feFlood flood-opacity="0.11" result="color-2"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-2"/>
+      <feComposite operator="in" in="color-2"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="椭圆_9">
+      <feOffset dx="0.5" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-3"/>
+      <feFlood flood-opacity="0.11" result="color-3"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-3"/>
+      <feComposite operator="in" in="color-3"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="椭圆_10">
+      <feOffset dx="0.5" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-4"/>
+      <feFlood flood-opacity="0.11" result="color-4"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-4"/>
+      <feComposite operator="in" in="color-4"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="椭圆_11">
+      <feOffset dx="0.5" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-5"/>
+      <feFlood flood-opacity="0.11" result="color-5"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-5"/>
+      <feComposite operator="in" in="color-5"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="组_269" data-name="组 269" transform="translate(310 -216.951)">
+    <rect id="矩形_66" data-name="矩形 66" width="607" height="10" rx="5" transform="translate(-298 222.951) rotate(90)" opacity="0.563" fill="url(#linear-gradient)"/>
+    <g id="组_267" data-name="组 267" transform="translate(-383 -9.049)">
+      <g data-type="innerShadowGroup">
+        <circle id="椭圆_7-2" data-name="椭圆 7" cx="7" cy="7" r="7" transform="translate(73 226)" fill="#b4f778"/>
+        <g transform="matrix(1, 0, 0, 1, 73, 226)" filter="url(#椭圆_7)">
+          <circle id="椭圆_7-3" data-name="椭圆 7" cx="7" cy="7" r="7" fill="#fff"/>
+        </g>
+      </g>
+      <g data-type="innerShadowGroup">
+        <circle id="椭圆_8-2" data-name="椭圆 8" cx="7" cy="7" r="7" transform="translate(73 823)" fill="#fbf291"/>
+        <g transform="matrix(1, 0, 0, 1, 73, 226)" filter="url(#椭圆_8)">
+          <circle id="椭圆_8-3" data-name="椭圆 8" cx="7" cy="7" r="7" transform="translate(0 597)" fill="#fff"/>
+        </g>
+      </g>
+      <g data-type="innerShadowGroup">
+        <circle id="椭圆_9-2" data-name="椭圆 9" cx="7" cy="7" r="7" transform="translate(73 375)" fill="#a4ddff"/>
+        <g transform="matrix(1, 0, 0, 1, 73, 226)" filter="url(#椭圆_9)">
+          <circle id="椭圆_9-3" data-name="椭圆 9" cx="7" cy="7" r="7" transform="translate(0 149)" fill="#fff"/>
+        </g>
+      </g>
+      <g data-type="innerShadowGroup">
+        <circle id="椭圆_10-2" data-name="椭圆 10" cx="7" cy="7" r="7" transform="translate(73 525)" fill="#faaffd"/>
+        <g transform="matrix(1, 0, 0, 1, 73, 226)" filter="url(#椭圆_10)">
+          <circle id="椭圆_10-3" data-name="椭圆 10" cx="7" cy="7" r="7" transform="translate(0 299)" fill="#fff"/>
+        </g>
+      </g>
+      <g data-type="innerShadowGroup">
+        <circle id="椭圆_11-2" data-name="椭圆 11" cx="7" cy="7" r="7" transform="translate(73 674)" fill="#ffad7b"/>
+        <g transform="matrix(1, 0, 0, 1, 73, 226)" filter="url(#椭圆_11)">
+          <circle id="椭圆_11-3" data-name="椭圆 11" cx="7" cy="7" r="7" transform="translate(0 448)" fill="#fff"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

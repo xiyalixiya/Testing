@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="utf-8">
+		<title></title>
+		<style></style>
+
+		<script type="module" src="planetequilibrium.js"></script>
+       
+	</head>
+    <link href="planetequilibrium.css" rel="stylesheet">
+	<body>
+        
+
+        <img id="backdrop" src = "src/backdrop.svg">
+        
+        <img id="sliderTick" src = "src/slidertick.svg" style = "visibility: hidden;">
+        <input id = "planetStateControl" type="range" min="1" max="5" value="1" step="1" style = "visibility: hidden;">
+
+        <img id="loading" src ="src/loading.gif">
+
+        <!-- Panel -->
+
+        <div id="panel" style = "visibility: hidden;">
+
+            <h1>Athena🧚‍♀️🐬</h1>
+
+            <div id="1">
+                <img id="state" src="src/epsilon.svg">
+                <h3 id="planetStatus">Planet Status</h3>
+
+                <h2 id="name">Victoria Ye</h2>
+                <h3 id="caretaker">Caretaker</h3>
+            </div>
+            
+            <div id="2">
+
+                <h3 id="naturalEventRate">Natural event rate (/M)</h3><h3 class ="stats" id="ner">8</h3>
+
+            </div>
+
+            <div id="habitat">
+                <h3>Habitat</h3><h3 class ="stats" id="habitatNum" >3</h3>
+                <div id="habitatIcon">
+                    <img id="arcticIcon" src="src/arcticIcon.svg">
+                    <img id="grasslandIcon" src="src/grasslandIcon.svg">
+                    <img id="desertIcon" src="src/desertIcon.svg">
+                    <img id="forestIcon" src="src/forestIcon.svg">
+                    <img id="snowmountainIcon" src="src/snowmountainIcon.svg">
+                    <img id="lakeIcon" src="src/lakeIcon.svg">
+                    <img id="valleyIcon" src="src/valleyIcon.svg">
+                </div>
+            </div>
+
+            <div id="species">
+                <h3>Species</h3><h3 class ="stats" id="speciesNum">9</h3>
+                <img src="src/marine.svg"> <h3 class ="speciesStats" id="marineNum">3</h3>
+                <img src="src/mammal.svg"> <h3 class ="speciesStats" id="mammalNum">6</h3>
+                <img src="src/aves.svg"> <h3 class ="speciesStats" id="avesNum">0</h3>
+                <img src="src/reptile.svg"> <h3 class ="speciesStats" id="reptileNum">0</h3>
+                <img src="src/insect.svg"> <h3 class ="speciesStats" id="insectNum">0</h3>
+            </div>
+
+            <h4>* Click on the volcano to check your E-impact</h4>
+
+        </div>
+
+
+        <!-- Volcano analytics -->
+
+       <img id="volcano" src="src/volcanoEpsilon.svg">
+       <button id="close"><img src="src/close.svg"></button>
+       <img id="EimpactDrop" src="src/EimpactDrop.svg">
+
+       <!-- Event highlighter -->
+
+       <img id="event" src="src/sandstorm.svg">
+       <img id="animalAction" src="src/sandstormGeneticChange.svg">
+       <img id="podAction" src="src/podActionSandstorm.svg">
+
+	</body>
+</html>

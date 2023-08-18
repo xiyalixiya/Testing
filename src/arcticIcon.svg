@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="63" height="63" viewBox="0 0 63 63">
+  <defs>
+    <filter id="路径_96">
+      <feOffset dy="-1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.161" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient" x1="0.202" y1="0.112" x2="0.738" y2="1.092" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#e0f2ff"/>
+      <stop offset="0.653" stop-color="#dffeed"/>
+      <stop offset="1" stop-color="#f2e2cb"/>
+    </linearGradient>
+    <filter id="路径_1">
+      <feOffset dy="-1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur-2"/>
+      <feFlood flood-opacity="0.161" result="color-2"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-2"/>
+      <feComposite operator="in" in="color-2"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="路径_2">
+      <feOffset dy="-1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur-3"/>
+      <feFlood flood-opacity="0.161" result="color-3"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-3"/>
+      <feComposite operator="in" in="color-3"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="组_109" data-name="组 109" transform="translate(-205 -239)">
+    <circle id="椭圆_63" data-name="椭圆 63" cx="31.5" cy="31.5" r="31.5" transform="translate(205 239)" fill="none"/>
+    <g data-type="innerShadowGroup">
+      <path id="路径_96-2" data-name="路径 96" d="M24.21,0C37.53,0,49.137,9.041,49.137,16.018S37.53,25.265,24.21,25.265.4,20.9.4,13.92,10.891,0,24.21,0Z" transform="translate(211.731 262.163)" fill="#95ddff"/>
+      <g transform="matrix(1, 0, 0, 1, 205, 239)" filter="url(#路径_96)">
+        <path id="路径_96-3" data-name="路径 96" d="M24.21,0C37.53,0,49.137,9.041,49.137,16.018S37.53,25.265,24.21,25.265.4,20.9.4,13.92,10.891,0,24.21,0Z" transform="translate(6.73 23.16)" fill="#fff"/>
+      </g>
+    </g>
+    <g id="组_93" data-name="组 93" transform="translate(218.903 256.161)">
+      <g data-type="innerShadowGroup">
+        <path id="路径_1-2" data-name="路径 1" d="M266.683,1675.315c-4.957.83-5.612,3.267-5.237,5.529s3.218,2.969.983,5.225-4.337,4.791-3.814,6.618.983,2.417,4.5,3.362,10.469,1.657,14.457.72a19.934,19.934,0,0,0,8.132-3.606c1.764-1.382,3.6-3.463,2.591-5.982s-5.991-1.561-8.292-5.461S271.64,1674.486,266.683,1675.315Z" transform="translate(-254.507 -1675.188)" fill="url(#linear-gradient)"/>
+        <g transform="matrix(1, 0, 0, 1, -13.9, -17.16)" filter="url(#路径_1)">
+          <path id="路径_1-3" data-name="路径 1" d="M266.683,1675.315c-4.957.83-5.612,3.267-5.237,5.529s3.218,2.969.983,5.225-4.337,4.791-3.814,6.618.983,2.417,4.5,3.362,10.469,1.657,14.457.72a19.934,19.934,0,0,0,8.132-3.606c1.764-1.382,3.6-3.463,2.591-5.982s-5.991-1.561-8.292-5.461S271.64,1674.486,266.683,1675.315Z" transform="translate(-240.6 -1658.03)" fill="#fff"/>
+        </g>
+      </g>
+      <g data-type="innerShadowGroup">
+        <path id="路径_2-2" data-name="路径 2" d="M235.56,1759.165c-.737.623-.288,1.611,0,2.492a2.818,2.818,0,0,0,2.175,1.492,6.033,6.033,0,0,0,2.6-.789c.587-.53-.938-2.514-1.825-3.195A2.464,2.464,0,0,0,235.56,1759.165Z" transform="translate(-235.159 -1750.723)" fill="#e0f2ff"/>
+        <g transform="matrix(1, 0, 0, 1, -13.9, -17.16)" filter="url(#路径_2)">
+          <path id="路径_2-3" data-name="路径 2" d="M235.56,1759.165c-.737.623-.288,1.611,0,2.492a2.818,2.818,0,0,0,2.175,1.492,6.033,6.033,0,0,0,2.6-.789c.587-.53-.938-2.514-1.825-3.195A2.464,2.464,0,0,0,235.56,1759.165Z" transform="translate(-221.26 -1733.56)" fill="#fff"/>
+        </g>
+      </g>
+    </g>
+    <g id="组_107" data-name="组 107" transform="translate(-324.145 502.408) rotate(-48)">
+      <g id="路径_109" data-name="路径 109" transform="translate(555.215 249.621) rotate(180)" fill="none">
+        <path d="M1.661,0,3.368,2.585l-1.6,1.842L0,3.322.414.921Z" stroke="none"/>
+        <path d="M 1.635587096214294 0.143061637878418 L 0.5059018135070801 0.9777283668518066 L 0.1099531650543213 3.272718906402588 L 1.745907545089722 4.296499252319336 L 3.242847681045532 2.576669216156006 L 1.635587096214294 0.143061637878418 M 1.660938858985901 -1.9073486328125e-06 L 3.368178844451904 2.584988117218018 L 1.7652587890625 4.426578044891357 L -1.192092895507812e-06 3.321877956390381 L 0.4141888618469238 0.9211580753326416 L 1.660938858985901 -1.9073486328125e-06 Z" stroke="none" fill="#00e2ff"/>
+      </g>
+      <line id="直线_15" data-name="直线 15" x2="1.125" transform="translate(552.092 247.184)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_110" data-name="路径 110" d="M2549.917,668.681l.956-.421" transform="translate(-1995.794 -421.916)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_112" data-name="路径 112" d="M2547.731,665.65l-.28,1.8.432,2.31" transform="translate(-1994.253 -420.284)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_113" data-name="路径 113" d="M2547.562,669.6l1.066-.442.521,1.917" transform="translate(-1994.399 -422.382)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+    </g>
+    <g id="组_108" data-name="组 108" transform="matrix(-0.719, -0.695, 0.695, -0.719, 462.412, 821.088)">
+      <g id="路径_109-2" data-name="路径 109" transform="translate(556.748 251.636) rotate(180)" fill="none">
+        <path d="M2.417,0,4.9,3.761,2.569,6.441,0,4.834.6,1.34Z" stroke="none"/>
+        <path d="M 2.391394853591919 0.143061637878418 L 0.6943793296813965 1.396898746490479 L 0.1099505424499512 4.784339427947998 L 2.549195051193237 6.310819625854492 L 4.775545120239258 3.752969980239868 L 2.391394853591919 0.143061637878418 M 2.416746377944946 -1.430511474609375e-06 L 4.900876522064209 3.761288404464722 L 2.568546295166016 6.440898418426514 L -3.814697265625e-06 4.833498477935791 L 0.6026663780212402 1.340328693389893 L 2.416746377944946 -1.430511474609375e-06 Z" stroke="none" fill="#00e2ff"/>
+      </g>
+      <line id="直线_15-2" data-name="直线 15" x2="1.637" transform="translate(552.203 248.089)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_110-2" data-name="路径 110" d="M2549.917,668.872l1.391-.613" transform="translate(-1994.758 -421.393)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_112-2" data-name="路径 112" d="M2547.858,665.65l-.408,2.62.628,3.362" transform="translate(-1993.638 -420.207)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+      <path id="路径_113-2" data-name="路径 113" d="M2547.562,669.8l1.552-.643.758,2.789" transform="translate(-1993.799 -421.661)" fill="none" stroke="#00e2ff" stroke-width="0.1"/>
+    </g>
+  </g>
+</svg>

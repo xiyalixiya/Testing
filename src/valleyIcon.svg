@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="63" height="63" viewBox="0 0 63 63">
+  <defs>
+    <filter id="路径_103">
+      <feOffset dy="-1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.161" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient" x1="0.769" y1="0.326" x2="0.262" y2="0.945" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#cce599"/>
+      <stop offset="0.64" stop-color="#cce599"/>
+      <stop offset="0.787" stop-color="#f4d675"/>
+      <stop offset="0.915" stop-color="#f4d675"/>
+      <stop offset="1" stop-color="#75f4cd"/>
+    </linearGradient>
+    <filter id="路径_106">
+      <feOffset dx="-0.5" dy="-0.5" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur-2"/>
+      <feFlood flood-opacity="0.161" result="color-2"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur-2"/>
+      <feComposite operator="in" in="color-2"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="组_115" data-name="组 115" transform="translate(-689 -238)">
+    <circle id="椭圆_69" data-name="椭圆 69" cx="31.5" cy="31.5" r="31.5" transform="translate(689 238)" fill="none"/>
+    <g data-type="innerShadowGroup">
+      <path id="路径_103-2" data-name="路径 103" d="M24.21,0C37.53,0,49.137,10.01,49.137,17.735s-14.8,10.277-28.115,10.277S.4,23.136.4,15.412,10.891,0,24.21,0Z" transform="translate(695.731 258.451)" fill="#c1bafc"/>
+      <g transform="matrix(1, 0, 0, 1, 689, 238)" filter="url(#路径_103)">
+        <path id="路径_103-3" data-name="路径 103" d="M24.21,0C37.53,0,49.137,10.01,49.137,17.735s-14.8,10.277-28.115,10.277S.4,23.136.4,15.412,10.891,0,24.21,0Z" transform="translate(6.73 20.45)" fill="#fff"/>
+      </g>
+    </g>
+    <g data-type="innerShadowGroup">
+      <path id="路径_106-2" data-name="路径 106" d="M2990.666,1603.788c-2.89.253-4.061,2.042-4.367,5.3s5.573,4.083,7.955,6.4,3.75,5.042,1.028,8.688-.545,5.212.331,5.633a13.5,13.5,0,0,0,8.838.742c4.815-1.052,7.452-1.767,9.549-4.177s.236-2.775.812-6.346,4.047-1.091,4.845-1.43.5-3.122-1.326-6.592-5.566-6.477-11.658-7.961-5.808-4.139-9.958-2.919S2993.556,1603.535,2990.666,1603.788Z" transform="translate(-2685.963 430.471) rotate(-31)" fill="url(#linear-gradient)"/>
+      <g transform="matrix(1, 0, 0, 1, 689, 238)" filter="url(#路径_106)">
+        <path id="路径_106-3" data-name="路径 106" d="M2990.666,1603.788c-2.89.253-4.061,2.042-4.367,5.3s5.573,4.083,7.955,6.4,3.75,5.042,1.028,8.688-.545,5.212.331,5.633a13.5,13.5,0,0,0,8.838.742c4.815-1.052,7.452-1.767,9.549-4.177s.236-2.775.812-6.346,4.047-1.091,4.845-1.43.5-3.122-1.326-6.592-5.566-6.477-11.658-7.961-5.808-4.139-9.958-2.919S2993.556,1603.535,2990.666,1603.788Z" transform="translate(-3374.96 192.47) rotate(-31)" fill="#fff"/>
+      </g>
+    </g>
+    <path id="路径_108" data-name="路径 108" d="M2705.711,680.753c1.4,2.121,4.281,1.916,6.4,4.787s-2.775,6.316,4.932,6.481,5.152.1,6.139.707,3.379,2.432,1.015-.435-2.951-.4-6.267-1.148-1.531-.052-3.115-3.607-2.17-3.86-4.651-5.5-2.085-3.739-3.86-3.642S2704.307,678.633,2705.711,680.753Z" transform="translate(-1991.758 -420.837)" fill="#8df6ff"/>
+  </g>
+</svg>

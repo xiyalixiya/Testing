@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+  <defs>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.628" gradientTransform="translate(0 -0.021) scale(1 1.042)" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#d0ff7b"/>
+      <stop offset="0.532" stop-color="#d0ff7b"/>
+      <stop offset="1" stop-color="#e89aff"/>
+    </radialGradient>
+  </defs>
+  <g id="组_312" data-name="组 312" transform="translate(-1400 -525)">
+    <rect id="矩形_5" data-name="矩形 5" width="48" height="48" transform="translate(1400 525)" fill="url(#radial-gradient)"/>
+    <path id="路径_5" data-name="路径 5" d="M14.241,24.243c1.134-2.558,2.256-6.18.494-8.7S10.375,13.237,7.36,12.2,1.867,10.234.654,7.92.127,1.9,1,0" transform="translate(1411.613 555.042) rotate(-88)" fill="none" stroke="#d548ff" stroke-linecap="round" stroke-width="1.5"/>
+    <path id="路径_6" data-name="路径 6" d="M5.953,12.261c-3.016,1.034-3.707,1.713-4.739,3.2a8.981,8.981,0,0,0-1.4,4.681" transform="matrix(0.961, 0.276, -0.276, 0.961, 1419.818, 533.834)" fill="none" stroke="#ff9226" stroke-linecap="round" stroke-width="1.5"/>
+    <path id="路径_7" data-name="路径 7" d="M4.893,7.084A7.706,7.706,0,0,1,1.023,4.062,6.414,6.414,0,0,1,0,0" transform="translate(1426.932 546.957) rotate(-85)" fill="none" stroke="#4dd6ff" stroke-linecap="round" stroke-width="1.5"/>
+    <path id="路径_8" data-name="路径 8" d="M.687,3.28A4.431,4.431,0,0,1-.28,1.941" transform="translate(1415.217 554.938) rotate(29)" fill="none" stroke="#d548ff" stroke-linecap="round" stroke-width="1.5"/>
+    <path id="路径_9" data-name="路径 9" d="M.967,0A4.43,4.43,0,0,0,0,1.339" transform="matrix(-0.875, 0.485, -0.485, -0.875, 1436.387, 538.931)" fill="none" stroke="#d548ff" stroke-linecap="round" stroke-width="1.5"/>
+  </g>
+</svg>

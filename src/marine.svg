@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="127" height="70" viewBox="0 0 127 70">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.474" y1="0.086" x2="0.475" y2="1.049" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76eef8"/>
+      <stop offset="0.128" stop-color="#70e0ea"/>
+      <stop offset="0.365" stop-color="#76eef8"/>
+      <stop offset="0.581" stop-color="#70e0ea"/>
+      <stop offset="0.783" stop-color="#76eef8"/>
+      <stop offset="1" stop-color="#76eef8"/>
+    </linearGradient>
+    <filter id="路径_231">
+      <feOffset dy="-3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feFlood flood-opacity="0.161" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="组_136" data-name="组 136" transform="translate(-157 -550)">
+    <circle id="椭圆_20" data-name="椭圆 20" cx="21.5" cy="21.5" r="21.5" transform="translate(157 562.697)" fill="#d1fff4" opacity="0.996"/>
+    <path id="路径_232" data-name="路径 232" d="M2119.684,864.018c7.841-.926,12.092-6.481,22.981-3.3s16.572-7.064,18.8,6.212-13.108,16.16-17.59,15.94-9.838.192-15.284-3.744a24.718,24.718,0,0,1-7.72-10.458A25.164,25.164,0,0,1,2119.684,864.018Z" transform="translate(-1962 -277.303)" fill="url(#linear-gradient)"/>
+    <g data-type="innerShadowGroup">
+      <path id="路径_231-2" data-name="路径 231" d="M2115.621,840.713a19.765,19.765,0,0,1,6.537-6.345c2.172,1.271,5.729,3.264,9.945,5.505,1.122.6,1.042-6.68,2.617-5.873.7.358,3.73,9.18,4.722,9.672,7.438,3.688,14.36,11.609,13.5,18.25s-3.029,5.491-2.777,6.723,1.393,5.982-1.212,4.175-2.329-2.531-3.6-4.175-6.267-5.966-7.008-6.063-.855,2.878-2.679,4.284-6.294,2.625-7.721,2.349,2.492-3.8,3.551-5.487,2.776-3.694,1.676-4.633-17.931-16.891-18.1-17.41" transform="translate(-1955 -268.41)" fill="#4cb9d3"/>
+      <g transform="matrix(1, 0, 0, 1, 157, 550)" filter="url(#路径_231)">
+        <path id="路径_231-3" data-name="路径 231" d="M2115.621,840.713a19.765,19.765,0,0,1,6.537-6.345c2.172,1.271,5.729,3.264,9.945,5.505,1.122.6,1.042-6.68,2.617-5.873.7.358,3.73,9.18,4.722,9.672,7.438,3.688,14.36,11.609,13.5,18.25s-3.029,5.491-2.777,6.723,1.393,5.982-1.212,4.175-2.329-2.531-3.6-4.175-6.267-5.966-7.008-6.063-.855,2.878-2.679,4.284-6.294,2.625-7.721,2.349,2.492-3.8,3.551-5.487,2.776-3.694,1.676-4.633-17.931-16.891-18.1-17.41" transform="translate(-2112 -818.41)" fill="#fff"/>
+      </g>
+    </g>
+    <path id="路径_233" data-name="路径 233" d="M13.884,3.111c20.711,0,62.035,3.257,62.035,15.132S63.013,42.7,42.3,42.7,0,33.374,0,21.5-6.827,3.111,13.884,3.111Z" transform="translate(204 563)" fill="#75ecf6" opacity="0.179"/>
+    <text id="MARINE" transform="translate(217.5 588.5)" fill="#4ee2ef" font-size="12" font-family="ArialRoundedMTBold, Arial Rounded MT Bold"><tspan x="0" y="0">MARINE</tspan></text>
+    <rect id="矩形_57" data-name="矩形 57" width="127" height="70" transform="translate(157 550)" fill="none"/>
+  </g>
+</svg>

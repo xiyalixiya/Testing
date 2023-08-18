@@ -1,0 +1,257 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: 'ibm_plex_monobold';
+    src: url('font/ibmplexmono-bold.woff2') format('woff2'),
+         url('font/ibmplexmono-bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'ibm_plex_monosemibold';
+    src: url('font/ibmplexmono-semibold.woff2') format('woff2'),
+         url('font/ibmplexmono-semibold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+
+body{
+    background: linear-gradient(45deg, rgb(255, 253, 232), rgb(219, 245, 254));
+}
+
+#backdrop{
+    height:100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position:absolute;
+}
+
+input[type="range"]{
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    position:absolute;
+    appearance: none;
+    background: linear-gradient(-90deg, rgba(180, 247, 120, 0.4), rgba(172, 234, 189, 0.0), rgba(164, 221, 255, 0.4), rgba(209, 197, 254, 0.0), rgba(250, 175, 253, 0.4), rgba(253, 174, 184, 0.0), rgba(255, 173, 123, 0.4), rgba(253, 210, 135, 0.0), rgba(251, 242, 145, 0.4) );
+    width: 750px;
+    height: 20px;
+    border-radius: 10px;
+    margin-left: -300px;
+    margin-top: 550px;
+    transform: rotate(-90deg);
+
+}
+
+input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    appearance: none;
+    height:60px;
+    width: 60px;
+    background-image: url(src/handle.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: rotate(var(--thumb-rotate));
+}
+
+#sliderTick{
+    position:absolute;
+    margin-left:68px;
+    margin-top:255px;
+    transform: scale(1.22);
+}
+
+#loading{
+    position: absolute;
+    margin-top: 400px;
+    margin-left:920px;
+    width:400px;
+    height:400px;
+}
+
+h1{
+    font-family: ibm_plex_monobold;
+    font-size:20px;
+    color: #8d8d8d;
+    position:absolute;
+    margin-top: 130px;
+    margin-left:180px;
+}
+
+h2{
+    color: #8d8d8d;
+    font-size:13px;
+    font-family: ibm_plex_monosemibold;
+}
+
+h3{
+    color: #8d8d8d;
+    font-size: 11px;
+    font-family: ibm_plex_monosemibold;
+}
+
+#state{
+    position:absolute;
+    margin-top:140px;
+    margin-left:350px;
+
+}
+
+#planetStatus{
+
+    position:absolute;
+    margin-top:200px;
+    margin-left:180px;
+}
+
+#name{
+
+    position:absolute;
+    margin-top:267px;
+    margin-left:370px;
+    font-size: 12px;
+}
+
+#caretaker{
+
+    position:absolute;
+    margin-top:270px;
+    margin-left:180px;
+}
+
+#planetScore{
+
+    position:absolute;
+    margin-top:350px;
+    margin-left:180px;
+}
+
+#upgrade{
+
+    position:absolute;
+    margin-top:350px;
+    margin-left:400px;
+}
+
+#naturalEventRate{
+
+    position:absolute;
+    margin-top:300px;
+    margin-left:180px;
+}
+
+#ner{
+
+    position:absolute;
+    margin-top:300px;
+    margin-left:450px;
+    color: #37DDB5;
+    font-size: 20px;
+}
+
+#habitat{
+
+    position:absolute;
+    margin-top:360px;
+    margin-left:180px;
+    width:330px;
+}
+
+
+#habitatNum{
+    position:relative;
+    margin-top:-34px;
+    margin-left:270px;
+    color:#3AC9F4;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+#species{
+
+    position:absolute;
+    margin-top:550px;
+    margin-left:180px;
+
+}
+
+#speciesNum{
+
+    position:relative;
+    margin-top:-30px;
+    margin-left:260px;
+    color:#F485EB; 
+    font-size: 20px; 
+    margin-bottom: 8px;
+}
+
+.speciesStats{
+
+    color:#D96DD1; 
+    font-size: 17px;
+    margin-top:-51px;
+    margin-left:270px;
+}
+
+
+
+h4{
+    position: absolute;
+    margin-top:950px;
+    margin-left:180px;
+    width:270px;
+    color: #8d8d8d;
+    font-family: ibm_plex_monosemibold;
+    font-size: 12px;
+}
+
+#volcano{
+    visibility: hidden;
+    position: absolute;
+    margin-top:130px;
+    margin-left:1750px;
+    transform: scale(1.1);
+    font-family: ibm_plex_monosemibold;
+}
+
+button{
+    border: none;
+    background-color: transparent;
+    visibility:hidden;
+    position: absolute;
+    margin-top:58px;
+    margin-left:2070px;
+}
+
+#event{
+    visibility: hidden;
+    position: absolute;
+    margin-top:100px;
+    margin-left:1980px;
+}
+
+#animalAction{
+    visibility: hidden;
+    position: absolute;
+    margin-top:180px;
+    margin-left:1830px;
+}
+
+#podAction{
+    visibility:hidden;
+    position: absolute;
+    margin-top:950px;
+    margin-left:1610px;
+}
+
+#EimpactDrop{
+    visibility: hidden;
+    position: absolute;
+    margin-top:850px;
+    margin-left:1805px;
+}
