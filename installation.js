@@ -1,7 +1,7 @@
-import * as THREE from 'three.module.js';
-import { OrbitControls } from 'OrbitControls.js';
-import { GLTFLoader } from 'GLTFLoader.js';
-import {SkeletonUtils} from 'SkeletonUtils.js';
+import * as THREE from 'https://github.com/xiyalixiya/xiyalixiya.github.io/blob/main/node_modules/three/build/three.module.js';
+import { OrbitControls } from 'https://github.com/xiyalixiya/xiyalixiya.github.io/blob/main/node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://github.com/xiyalixiya/xiyalixiya.github.io/blob/main/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import {SkeletonUtils} from 'https://github.com/xiyalixiya/xiyalixiya.github.io/blob/main/node_modules/three/examples/jsm/utils/SkeletonUtils.js';
 
 const clock = new THREE.Clock();
 
