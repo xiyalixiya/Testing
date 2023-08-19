@@ -6,7 +6,7 @@ import {SkeletonUtils} from '/build/SkeletonUtils.js';
 const clock = new THREE.Clock();
 
 let theme = new Audio('mp3/theme.mp3');
-theme.play();
+// theme.play();
 theme.loop = true;
 
 let bubbleAction = [];
