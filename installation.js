@@ -145,11 +145,7 @@ loader.load(
           color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))]
         });
 
-		animal.traverse(function(child) {
-        if (child instanceof THREE.Mesh) {
-            child.material = material;
-        }
-    });
+		
 
         scene.add(animal);
 
@@ -169,7 +165,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded manta' );
+		console.log( ( xhr.loaded ) + '% loaded manta' );
 
 	},
 	// called when loading has errors
@@ -200,7 +196,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded flying fish' );
+		console.log( ( xhr.loaded ) + '% loaded flying fish' );
 
 	},
 	// called when loading has errors
@@ -232,7 +228,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded dolphin' );
+		console.log( ( xhr.loaded ) + '% loaded dolphin' );
 
 	},
 	// called when loading has errors
@@ -279,7 +275,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded arctic animals' );
+		console.log( ( xhr.loaded  ) + '% loaded arctic animals' );
 
 	},
 	// called when loading has errors
@@ -329,7 +325,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded grasslandAnimals' );
+		console.log( ( xhr.loaded) + '% loaded grasslandAnimals' );
 
 	},
 	// called when loading has errors
@@ -377,7 +373,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded desertAnimals' );
+		console.log( ( xhr.loaded) + '% loaded desertAnimals' );
 
 	},
 	// called when loading has errors
@@ -441,7 +437,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded forestAnimals' );
+		console.log( ( xhr.loaded  ) + '% loaded forestAnimals' );
 
 	},
 	// called when loading has errors
@@ -506,7 +502,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded snowmountainAnimals' );
+		console.log( ( xhr.loaded  ) + '% loaded snowmountainAnimals' );
 
 	},
 	// called when loading has errors
@@ -571,7 +567,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded lakeAnimals' );
+		console.log( ( xhr.loaded) + '% loaded lakeAnimals' );
 
 	},
 	// called when loading has errors
@@ -635,7 +631,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded valleyAnimals' );
+		console.log( ( xhr.loaded) + '% loaded valleyAnimals' );
 
 	},
 	// called when loading has errors
@@ -676,7 +672,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree forest' );
+		console.log( ( xhr.loaded) + '% loaded tree forest' );
 
 	},
 	// called when loading has errors
@@ -708,7 +704,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree lake' );
+		console.log( ( xhr.loaded) + '% loaded tree lake' );
 
 	},
 	// called when loading has errors
@@ -740,7 +736,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree valley' );
+		console.log( ( xhr.loaded) + '% loaded tree valley' );
 
 	},
 	// called when loading has errors
@@ -761,7 +757,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded arctic' );
+		console.log( ( xhr.loaded ) + '% loaded arctic' );
 
 	},
 	// called when loading has errors
@@ -783,7 +779,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded grassland' );
+		console.log( ( xhr.loaded ) + '% loaded grassland' );
 
 	},
 	// called when loading has errors
@@ -805,7 +801,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded desert' );
+		console.log( ( xhr.loaded) + '% loaded desert' );
 
 	},
 	// called when loading has errors
@@ -827,7 +823,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded forest' );
+		console.log( ( xhr.loaded) + '% loaded forest' );
 
 	},
 	// called when loading has errors
@@ -848,7 +844,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded snowmountain' );
+		console.log( ( xhr.loaded) + '% loaded snowmountain' );
 
 	},
 	// called when loading has errors
@@ -869,7 +865,7 @@ loader.load(
 	}, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded lake' );
+		console.log( ( xhr.loaded ) + '% loaded lake' );
 
 	},
 	// called when loading has errors
@@ -890,7 +886,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded valley' );
+		console.log( ( xhr.loaded) + '% loaded valley' );
 
 	},
 	// called when loading has errors
@@ -920,7 +916,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded volcano' );
+		console.log( ( xhr.loaded) + '% loaded volcano' );
 
 	},
 	// called when loading has errors
@@ -954,7 +950,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded hurricane' );
+		console.log( ( xhr.loaded ) + '% loaded hurricane' );
 
 	},
 	// called when loading has errors
@@ -986,7 +982,7 @@ loader.load(
     }, 
 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded meteorstrike' );
+		console.log( ( xhr.loaded) + '% loaded meteorstrike' );
 
 	},
 	// called when loading has errors
