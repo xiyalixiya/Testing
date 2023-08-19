@@ -166,7 +166,18 @@ loader.load(
 		animalMove.push(animalMixer.clipAction(animalWalk));
 		animals.push(animal);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded manta' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -186,7 +197,18 @@ loader.load(
 		animalMove.push(animalMixer.clipAction(animalWalk));
 		animals.push(animal);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded flying fish' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -207,7 +229,18 @@ loader.load(
 		animals.push(animal);
 
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded dolphin' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -243,53 +276,21 @@ loader.load(
 		animalMove.push(foxMixer.clipAction(foxWalk));
 		animals.push(fox);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded arctic animals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
-// var wolfs = new THREE.AnimationObjectGroup();
-// var mesh;
 
-// loader.load(
-// 	'glb/wolf.glb',
-// 	function(gltf){
-// 		new Array(5).fill(null).map((d, i) => {
-
-//       mesh = gltf.scene;
-
-// 	  var material = new THREE.MeshLambertMaterial({
-//           color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))]
-//         });
-
-// 		mesh.traverse(function(child) {
-//         if (child instanceof THREE.Mesh) {
-//             child.material = material;
-//         }
-//     });
-
-
-// 	  	// mesh.position.x *= Math.random()*0.2 + 0.7;
-// 		// mesh.position.z *= Math.random()*0.2 + 0.8;
-// 		// mesh.position.y *= Math.random()* 0.3 + 1;
-// 		// mesh.rotateY = Math.random() * 10 * Math.PI/180;
-      
-//       wolfs.add(mesh);
-// 	  animals.push(mesh);
-// 	  mesh.name = 'wolf';
-// 	  mesh.userData.level = 'epsilon';
-// 	  mesh.userData.continent = 'arctic';
-//       scene.add(mesh);
-
-// 	  wolfs.uncache(mesh);
-
-//     });
-
-//     let wolfMixer = new THREE.AnimationMixer(wolfs);
-// 	mixer.push(wolfMixer);
-//     var wolfWalk = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
-//     animalMove.push(wolfMixer.clipAction(wolfWalk));
-//   }
-	
-// );
 
 
 loader.load(
@@ -325,7 +326,18 @@ loader.load(
 		animalMove.push(goatMixer.clipAction(goatWalk));
 		animals.push(goat);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded grasslandAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -362,7 +374,18 @@ loader.load(
 		animalMove.push(giraffeMixer.clipAction(giraffeWalk));
 		animals.push(giraffe);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded desertAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -415,7 +438,18 @@ loader.load(
 		animalMove.push(eagleMixer.clipAction(eagleWalk));
 		animals.push(eagle);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded forestAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -469,7 +503,18 @@ loader.load(
 		animalMove.push(elephantMixer.clipAction(elephantWalk));
 		animals.push(elephant);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded snowmountainAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -523,7 +568,18 @@ loader.load(
 		animalMove.push(turtleMixer.clipAction(turtleWalk));
 		animals.push(turtle);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded lakeAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -576,7 +632,18 @@ loader.load(
 		animalMove.push(dragonflyMixer.clipAction(dragonflyWalk));
 		animals.push(dragonfly);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded valleyAnimals' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
@@ -606,7 +673,18 @@ loader.load(
 		}
 
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree forest' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -627,7 +705,18 @@ loader.load(
 			trees.push(tree);
 		}
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree lake' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -648,7 +737,18 @@ loader.load(
 			trees.push(tree);
 		}
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded tree valley' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -658,7 +758,18 @@ loader.load(
 		arcticGLB.name = 'arctic';
 		arcticGLB.visible = false;
         scene.add(arcticGLB);
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded arctic' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -669,7 +780,18 @@ loader.load(
 		grasslandGLB.visible = false;
         scene.add(grasslandGLB);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded grassland' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -680,7 +802,18 @@ loader.load(
 		desertGLB.visible = false;
         scene.add(desertGLB);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded desert' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -691,7 +824,18 @@ loader.load(
 		forestGLB.visible = false;
         scene.add(forestGLB);
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded forest' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -701,7 +845,18 @@ loader.load(
 		snowmountainGLB.name = 'snowmountain';
 		snowmountainGLB.visible = false;
         scene.add(snowmountainGLB);
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded snowmountain' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 loader.load(
@@ -711,6 +866,17 @@ loader.load(
 		lakeGLB.name = 'lake';
 		lakeGLB.visible = false;
         scene.add(lakeGLB);
+	}, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded lake' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
 	}
 );
 
@@ -721,7 +887,18 @@ loader.load(
 		valleyGLB.name = 'valley';
 		valleyGLB.visible = false;
         scene.add(valleyGLB);
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded valley' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 let volcanoMixer;
@@ -740,7 +917,18 @@ loader.load(
 		mixer.push(volcanoMixer);
 		volcano = gltf.animations;
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded volcano' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 let hurricaneMixer;
@@ -763,7 +951,18 @@ loader.load(
 		hurricane = hurricaneMixer.clipAction( hurricaneClipAction );
 		
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded hurricane' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 let meteorstrikeMixer;
@@ -784,7 +983,18 @@ loader.load(
 
 
 
-    }
+    }, 
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded meteorstrike' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
 );
 
 
