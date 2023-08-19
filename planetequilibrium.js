@@ -1,7 +1,7 @@
-import * as THREE from './node_modules/three/build/three.module.js';
-import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import {SkeletonUtils} from './node_modules/three/examples/jsm/utils/SkeletonUtils.js';
+import * as THREE from '../build/three.module.js';
+import { OrbitControls } from '/build/OrbitControls.js';
+import { GLTFLoader } from '/build/GLTFLoader.js';
+import {SkeletonUtils} from '/build/SkeletonUtils.js';
 
 const clock = new THREE.Clock();
 
@@ -2327,9 +2327,9 @@ manager.onLoad = function ( ) {
 		animalMove[i].play();
 	}
 
-	for(var m = 0; m < animals.length; m++){
-		animals[m].visible = true;
-	}
+	// for(var m = 0; m < animals.length; m++){
+	// 	animals[m].visible = true;
+	// }
 
 
 
@@ -2988,7 +2988,7 @@ function animate() {
 		dead[m].rotation.y += 0.1;
 	}
 
-	scene.rotation.y -= 0.01;
+	scene.rotation.y -= 0.001;
 
 	renderer.render( scene, camera );
 }
