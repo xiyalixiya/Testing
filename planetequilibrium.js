@@ -147,9 +147,9 @@ let trees = [];
 let wind = [];
 
 const loader = new GLTFLoader(manager);
-
+// /node_modules/three/examples/js/libs/draco/gltf/
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath( '/node_modules/three/examples/js/libs/draco/gltf/' );
+dracoLoader.setDecoderPath( '/build/gltf/' );
 loader.setDRACOLoader( dracoLoader );
 
 dracoLoader.preload();
