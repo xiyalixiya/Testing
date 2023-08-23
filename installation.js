@@ -239,6 +239,8 @@ loader.load(
 	}
 );
 
+
+
 loader.load(
     'glb/arcticAnimals.glb',
     function (gltf){
@@ -1001,10 +1003,6 @@ loader.load(
 let babys = [];
 
 function grow(){
-	let foxNum = 8;
-	let wolfNum = 5;
-	let cowNum = 6;
-	let goatNum = 4;
 
 	console.log(animals);
 		for(var i = 0; i < animals.length; i++){

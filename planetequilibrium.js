@@ -2,6 +2,7 @@ import * as THREE from '../build/three.module.js';
 import { OrbitControls } from '/build/OrbitControls.js';
 import { GLTFLoader } from '/build/GLTFLoader.js';
 import {SkeletonUtils} from '/build/SkeletonUtils.js';
+import { DRACOLoader } from '/build/DRACOLoader.js';
 
 const clock = new THREE.Clock();
 
@@ -28,20 +29,26 @@ const xAxis = new THREE.Vector3(1,0,0);
 const yAxis = new THREE.Vector3(0,1,0);
 const zAxis = new THREE.Vector3(0,0,1);
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.99);
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.70);
 scene.add(ambientLight);
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
 scene.add(hemisphereLight);
-const directionalLight1 = new THREE.DirectionalLight(0xFFFAA5, 0.1);
+const directionalLight1 = new THREE.DirectionalLight(0xFFFAA5, 0.4);
 directionalLight1.target.position.set(0,0,0);
 directionalLight1.position.set(3,3,3);
 scene.add(directionalLight1);
 scene.add(directionalLight1.target);
+const directionalLight2 = new THREE.DirectionalLight(0xFFFAA5, 0.3);
+directionalLight2.target.position.set(0,0,0);
+directionalLight2.position.set(-3,0,-3);
+scene.add(directionalLight2);
+scene.add(directionalLight2.target);
 
 
 let backdrop = document.querySelector('#backdrop');
 let planetStateControl = document.querySelector('#planetStateControl');
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.gammaOutput = true;
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.domElement.style.position = 'absolute';
 document.body.insertBefore( renderer.domElement, planetStateControl);
@@ -52,10 +59,10 @@ const planet = new THREE.SphereGeometry( 2, 80, 80 );
 const materialPlanet = new THREE.MeshLambertMaterial( { color: '#31598C' } ); 
 const spherePlanet = new THREE.Mesh( planet, materialPlanet ); 
 const ocean = new THREE.SphereGeometry( 2.28, 80, 80 ); 
-const materialOcean = new THREE.MeshLambertMaterial( { color: '#8FD6ED', transparent:true, opacity:0.98 } ); 
+const materialOcean = new THREE.MeshLambertMaterial( { color: '#48D2FF', transparent:true, opacity:0.98 } ); 
 const sphereOcean = new THREE.Mesh( ocean, materialOcean ); 
 
-let defaultBackground = 'linear-gradient(45deg, rgb(255, 255, 250), rgb(219, 245, 254))';
+let defaultBackground = 'linear-gradient(45deg, rgb(255, 253, 232), rgb(211, 248, 255))';
 let planetState = document.querySelector('#state');
 let volcanoAnalytics = document.querySelector('#volcano');
 let EimpactDrop = document.querySelector('#EimpactDrop');
@@ -74,6 +81,10 @@ let insectNum = document.querySelector('#insectNum');
 let eventLabel = document.querySelector('#event');
 let animalLabel = document.querySelector('#animalAction');
 let podLabel = document.querySelector('#podAction');
+let cc = document.querySelector('#cc');
+let ccTip = document.querySelector('#ccTip');
+let ccBuild = document.querySelector('#ccBuild');
+let ccFinish = document.querySelector('#ccFinish');
 
 speciesNum.style.marginLeft = '270px';
 forestIcon.style.visibility = 'hidden';
@@ -81,7 +92,8 @@ snowmountainIcon.style.visibility = 'hidden';
 lakeIcon.style.visibility = 'hidden';
 valleyIcon.style.visibility = 'hidden';
 
-const lowLevelAnimal = ['#E9F6AD', '#F1CFCB', '#9DD2E9', '#FBC7ED', '#FDDFAE'];
+const lowLevelAnimal = ['#B49A79', '#AC7C94', '#B1B178', '#BCA395', '#98C9B2', '#BDA6D3', '#A9C3D1', '#97BF96', '#8792B9', '#A391C6', '#7BB5BF'];
+const highLevelAnimal = ['#D3FA20', '#F7B333', '#37BFFA', '#F741C6', '#21F5E5', '#23EF8A', '#B42BF0', '#F2F211', '#FF9F4D', '#5C62FF', '#F23082'];
 
 
 // load game elements
@@ -112,15 +124,17 @@ let geneticChange = [];
 let dead = [];
 
 function animalAction(){
+	// Math.floor(Math.random()* (animals.length - 1))
 	for(var i = 0; i < animals.length; i++){
 		let copyGene = SkeletonUtils.clone(geneticChangeMesh);
-		copyGene.position.set(animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.x *1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.y*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.z*1.008);
+		copyGene.position.set(animals[i].children[0].position.x *1.008, animals[i].children[0].position.y*1.008, animals[i].children[0].position.z*1.008);
 		geneticChange.push(copyGene);
 	}
 
 	for(var j = 0; j < animals.length; j++){
 		let copyDead = SkeletonUtils.clone(deadMesh);
-		copyDead.position.set(animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.x*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.y*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.z*1.008);
+		copyDead.userData.tag = j;
+		copyDead.position.set(animals[j].children[0].position.x*1.008, animals[j].children[0].position.y*1.008, animals[j].children[0].position.z*1.008);
 		dead.push(copyDead);
 	}
 }
@@ -134,6 +148,11 @@ let wind = [];
 
 const loader = new GLTFLoader(manager);
 
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath( '/node_modules/three/examples/js/libs/draco/gltf/' );
+loader.setDRACOLoader( dracoLoader );
+
+dracoLoader.preload();
 
 loader.load(
     'glb/manta.glb',
@@ -146,6 +165,11 @@ loader.load(
 		animal.name = 'manta';
 		animal.userData.level = 'epsilon';
 		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Sphere033').material.color.r = material.color.r;
+		animal.getObjectByName('Sphere033').material.color.g = material.color.g;
+		animal.getObjectByName('Sphere033').material.color.b = material.color.b;
 
 		let animalMixer = new THREE.AnimationMixer( animal );
 		mixer.push(animalMixer);
@@ -167,6 +191,12 @@ loader.load(
 		animal.name = 'flyingfish';
 		animal.userData.level = 'epsilon';
 
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Sphere032').material.color.r = material.color.r;
+		animal.getObjectByName('Sphere032').material.color.g = material.color.g;
+		animal.getObjectByName('Sphere032').material.color.b = material.color.b;
+
 		let animalMixer = new THREE.AnimationMixer( animal );
 		mixer.push(animalMixer);
 		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'flyingfish' );
@@ -181,6 +211,15 @@ loader.load(
     function (gltf){
         const animal = gltf.scene;
 		animal.visible = false;
+
+		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Dolphin001').material.color.r = material.color.r;
+		animal.getObjectByName('Dolphin001').material.color.g = material.color.g;
+		animal.getObjectByName('Dolphin001').material.color.b = material.color.b;
+
+
         scene.add(animal);
 
 		gltf.scene.animations = gltf.animations;
@@ -197,19 +236,59 @@ loader.load(
     }
 );
 
+
+
+
+
+loader.load(
+    'glb/fox.glb',
+    function (gltf){
+        const animal = gltf.scene;
+		animal.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Fox001').material.color.r = material.color.r;
+		animal.getObjectByName('Fox001').material.color.g = material.color.g;
+		animal.getObjectByName('Fox001').material.color.b = material.color.b;
+
+
+        scene.add(animal);
+
+		animal.animations = gltf.animations;
+		animal.name = 'wolf';
+		animal.userData.level = 'epsilon';
+		animal.userData.continent = 'arctic';
+		animals.push(animal);
+
+		let animalMixer = new THREE.AnimationMixer( animal );
+		mixer.push(animalMixer);
+		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
+		animalMove.push(animalMixer.clipAction(animalWalk));
+		
+
+
+    }
+);
+
+
 loader.load(
     'glb/arcticAnimals.glb',
     function (gltf){
         const wolf = gltf.scene.getObjectByName('wolf');
 		wolf.visible = false;
-		const fox = gltf.scene.getObjectByName('fox');
-		fox.visible = false;
-        
+		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		wolf.getObjectByName('Wolf001').material.color.r = material.color.r;
+		wolf.getObjectByName('Wolf001').material.color.g = material.color.g;
+		wolf.getObjectByName('Wolf001').material.color.b = material.color.b;
 
-		wolf.name = 'wolf';
+
+		wolf.name = 'fox';
 		wolf.userData.level = 'epsilon';
 		wolf.userData.continent = 'arctic';
-		wolf.animations = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
+		wolf.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'wolf' ));
 		scene.add(wolf);
 
 		let wolfMixer = new THREE.AnimationMixer( wolf );
@@ -218,20 +297,22 @@ loader.load(
 		animalMove.push(wolfMixer.clipAction(wolfWalk));
 		animals.push(wolf);
 
-		fox.name = 'fox';
-		fox.userData.level = 'epsilon';
-		fox.userData.continent = 'arctic';
-		fox.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'fox' ));
-		scene.add(fox);
+		// fox.name = 'fox';
+		// fox.userData.level = 'epsilon';
+		// fox.userData.continent = 'arctic';
+		// fox.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'fox' ));
+		// scene.add(fox);
 
-		let foxMixer = new THREE.AnimationMixer( fox );
-		mixer.push(foxMixer);
-		const foxWalk = THREE.AnimationClip.findByName( gltf.animations, 'fox' );
-		animalMove.push(foxMixer.clipAction(foxWalk));
-		animals.push(fox);
+		// let foxMixer = new THREE.AnimationMixer( fox );
+		// mixer.push(foxMixer);
+		// const foxWalk = THREE.AnimationClip.findByName( gltf.animations, 'fox' );
+		// animalMove.push(foxMixer.clipAction(foxWalk));
+		// animals.push(fox);
 
     }
 );
+
+
 
 
 loader.load(
@@ -242,6 +323,17 @@ loader.load(
 		const goat = gltf.scene.getObjectByName('goat');
 		goat.visible = false;
         
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		cow.getObjectByName('Sphere021').material.color.r = material.color.r;
+		cow.getObjectByName('Sphere021').material.color.g = material.color.g;
+		cow.getObjectByName('Sphere021').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		goat.getObjectByName('Sphere020').material.color.r = material.color.r;
+		goat.getObjectByName('Sphere020').material.color.g = material.color.g;
+		goat.getObjectByName('Sphere020').material.color.b = material.color.b;
 
 		cow.name = 'cow';
 		cow.userData.level = 'epsilon';
@@ -271,6 +363,9 @@ loader.load(
 );
 
 
+
+
+
 loader.load(
     'glb/desertAnimals.glb',
     function (gltf){
@@ -278,6 +373,18 @@ loader.load(
 		tiger.visible = false;
 		const giraffe = gltf.scene.getObjectByName('giraffe');
 		giraffe.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		tiger.getObjectByName('Tiger002').material.color.r = material.color.r;
+		tiger.getObjectByName('Tiger002').material.color.g = material.color.g;
+		tiger.getObjectByName('Tiger002').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		giraffe.getObjectByName('Giraffe001').material.color.r = material.color.r;
+		giraffe.getObjectByName('Giraffe001').material.color.g = material.color.g;
+		giraffe.getObjectByName('Giraffe001').material.color.b = material.color.b;
         
 
 		tiger.name = 'tiger';
@@ -318,6 +425,25 @@ loader.load(
 		hummingbird.visible = false;
 		const eagle = gltf.scene.getObjectByName('eagle');
 		eagle.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		eagle.getObjectByName('Sphere023').material.color.r = material.color.r;
+		eagle.getObjectByName('Sphere023').material.color.g = material.color.g;
+		eagle.getObjectByName('Sphere023').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		hummingbird.getObjectByName('Sphere011').material.color.r = material.color.r;
+		hummingbird.getObjectByName('Sphere011').material.color.g = material.color.g;
+		hummingbird.getObjectByName('Sphere011').material.color.b = material.color.b;
+
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		paradise.getObjectByName('Sphere024').material.color.r = material.color.r;
+		paradise.getObjectByName('Sphere024').material.color.g = material.color.g;
+		paradise.getObjectByName('Sphere024').material.color.b = material.color.b;
         
 
 		paradise.name = 'paradise';
@@ -372,6 +498,23 @@ loader.load(
 		squirrel.visible = false;
 		const elephant = gltf.scene.getObjectByName('elephant');
 		elephant.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });			
+		polarbear.getObjectByName('Sphere025').material.color.r = material.color.r;
+		polarbear.getObjectByName('Sphere025').material.color.g = material.color.g;
+		polarbear.getObjectByName('Sphere025').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });						
+		squirrel.getObjectByName('Squirrel002').material.color.r = material.color.r;
+		squirrel.getObjectByName('Squirrel002').material.color.g = material.color.g;
+		squirrel.getObjectByName('Squirrel002').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		elephant.getObjectByName('Elephant001').material.color.r = material.color.r;
+		elephant.getObjectByName('Elephant001').material.color.g = material.color.g;
+		elephant.getObjectByName('Elephant001').material.color.b = material.color.b;
+        
+        
         
 
 		polarbear.name = 'polarbear';
@@ -426,6 +569,21 @@ loader.load(
 		frog.visible = false;
 		const turtle = gltf.scene.getObjectByName('turtle');
 		turtle.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		lizard.getObjectByName('Sphere026').material.color.r = material.color.r;
+		lizard.getObjectByName('Sphere026').material.color.g = material.color.g;
+		lizard.getObjectByName('Sphere026').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		frog.getObjectByName('Sphere028').material.color.r = material.color.r;
+		frog.getObjectByName('Sphere028').material.color.g = material.color.g;
+		frog.getObjectByName('Sphere028').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		turtle.getObjectByName('Sphere027').material.color.r = material.color.r;
+		turtle.getObjectByName('Sphere027').material.color.g = material.color.g;
+		turtle.getObjectByName('Sphere027').material.color.b = material.color.b;
         
 
 		lizard.name = 'lizard';
@@ -480,6 +638,20 @@ loader.load(
 		const dragonfly = gltf.scene.getObjectByName('dragonfly');
 		dragonfly.visible = false;
         
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		butterfly.getObjectByName('Sphere031').material.color.r = material.color.r;
+		butterfly.getObjectByName('Sphere031').material.color.g = material.color.g;
+		butterfly.getObjectByName('Sphere031').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		bee.getObjectByName('Sphere030').material.color.r = material.color.r;
+		bee.getObjectByName('Sphere030').material.color.g = material.color.g;
+		bee.getObjectByName('Sphere030').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		dragonfly.getObjectByName('Sphere029').material.color.r = material.color.r;
+		dragonfly.getObjectByName('Sphere029').material.color.g = material.color.g;
+		dragonfly.getObjectByName('Sphere029').material.color.b = material.color.b;
 
 		butterfly.name = 'butterfly';
 		butterfly.userData.level = 'alpha';
@@ -538,6 +710,7 @@ loader.load(
 
 		gltf.scene.animations = gltf.animations;
 		tree.name = 'treeForest';
+		
 
 		for( var i = 0; i < tree.children.length; i++){
 			let windMixer = new THREE.AnimationMixer( tree.children[i] );
@@ -715,6 +888,8 @@ loader.load(
     'glb/meteorstrike.glb',
     function (gltf){
         const meteorstrikeGLB = gltf.scene;
+		console.log('meteorstrike');
+		console.log(gltf);
 		meteorstrikeGLB.name = 'meteorstrike';
 		meteorstrikeGLB.visible = false;
         scene.add(meteorstrikeGLB);
@@ -736,15 +911,13 @@ loader.load(
 
 let babys = [];
 
+
 function grow(){
-	let foxNum = 8;
-	let wolfNum = 5;
-	let cowNum = 6;
-	let goatNum = 4;
 
 	console.log(animals);
 		for(var i = 0; i < animals.length; i++){
 			if(animals[i].name == 'fox'){
+				scene.getObjectByName('arctic').add(animals[i]);
 				for(var j = 0; j < 8; j++){
 
 				var baby = SkeletonUtils.clone(animals[i]);
@@ -768,17 +941,25 @@ function grow(){
 					baby.userData.level = 'alpha';
 				}
 
-				// baby.traverse(
-				// 	function(node){
-				// 		if(node.isMesh){
-				// 			node.material = new THREE.MeshBasicMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
-				// 		}
-				// 	}
-				//  );
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Wolf001').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Wolf001').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.7;
-					baby.position.z *= Math.random()*0.2 + 0.8;
-					baby.position.y *= Math.random()* 0.2 + 1;
+					// baby.position.x *= Math.random()*0.2 + 0.7;
+					// baby.position.z *= Math.random()*0.2 + 0.8;
+					// baby.position.y *= Math.random()* 0.2 + 1;
+
+
+				
+				baby.position.x *= Math.random()*0.2 + 0.7;
+				baby.position.z *= Math.random()*0.2 + 0.8;
+				baby.position.y *= Math.random()* 0.3 + 1;
+
 
 				
 				babys.push(baby);
@@ -788,7 +969,7 @@ function grow(){
 
 				// let babyMixer = new THREE.AnimationMixer( baby );
 				// mixer.push(babyMixer);
-				// const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'fox' );
+				// const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'wolf' );
 				// let babyAction = babyMixer.clipAction(babyWalk);
 				// animalMove.push(babyAction);
 
@@ -798,6 +979,7 @@ function grow(){
 
 
 			} else if (animals[i].name == 'wolf'){
+				scene.getObjectByName('arctic').add(animals[i]);
 				for(var j = 0; j < 5; j++){
 				var baby = SkeletonUtils.clone(animals[i]);
 
@@ -820,17 +1002,42 @@ function grow(){
 					baby.userData.level = 'alpha';
 				}
 
-				baby.position.x *= Math.random()*0.2 + 0.7;
-				baby.position.z *= Math.random()*0.2 + 0.8;
-				baby.position.y *= Math.random()* 0.3 + 1;
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Fox001').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Fox001').material = copyMaterial;
+
+				// baby.position.x *= Math.random()*0.2 + 0.7;
+				// baby.position.z *= Math.random()*0.2 + 0.8;
+				// baby.position.y *= Math.random()* 0.3 + 1;
+
+				baby.rotation.x = Math.random()*0.1;
+				baby.rotation.z = Math.random()*0.1;
+				baby.rotation.y = Math.random()*0.1;
+
+
+				
+				
 
 
 				babys.push(baby);
 				scene.getObjectByName('arctic').add(baby);
 				renderer.render( scene, camera );
+
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'wolf' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				animalMove.push(babyAction);
+
 				}
 				
 				} else if (animals[i].name == 'cow'){
+					scene.getObjectByName('grassland').add(animals[i]);
 					for(var j = 0; j < 6; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -850,6 +1057,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Sphere021').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Sphere021').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.2 + 0.8;
 					baby.position.z *= Math.random()*0.2 + 0.8;
 					baby.position.y *= Math.random()* 0.3 + 1;
@@ -862,6 +1078,7 @@ function grow(){
 						}
 
 				} else if (animals[i].name == 'goat'){
+					scene.getObjectByName('grassland').add(animals[i]);
 					for(var j = 0; j < 5; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -881,15 +1098,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Sphere020').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Sphere020').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.1 + 1;
 					baby.position.z *= Math.random()*0.1 + 0.8;
 					baby.position.y *= Math.random()* 0.1 + 1;
 
+
 						babys.push(baby);
 						scene.getObjectByName('grassland').add(baby);
 						renderer.render( scene, camera );
+
+
+
 						}
 				} else if (animals[i].name == 'tiger'){
+					scene.getObjectByName('desert').add(animals[i]);
 					for(var j = 0; j < 5; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -909,6 +1140,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Tiger002').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Tiger002').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.1 + 1;
 					baby.position.z *= Math.random()*0.2 + 0.9;
 					baby.position.y *= Math.random()* 0.1 + 0.9;
@@ -916,8 +1156,10 @@ function grow(){
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
 						renderer.render( scene, camera );
+
 						}
 				} else if (animals[i].name == 'giraffe'){
+					scene.getObjectByName('desert').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -937,6 +1179,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Giraffe001').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Giraffe001').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.1 + 0.8;
 					baby.position.z *= Math.random()*0.2 + 1;
 					baby.position.y *= Math.random()* 0.1 + 1.05;
@@ -944,8 +1195,10 @@ function grow(){
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
 						renderer.render( scene, camera );
+
 						}
 				} else if (animals[i].name == 'paradise'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -962,6 +1215,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere024').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere024').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.2 + 0.8;
 					baby.position.z *= Math.random()*0.2 + 0.9;
 					baby.position.y *= Math.random()* 0.7 + 1.5;
@@ -971,6 +1233,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'eagle'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -986,6 +1249,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere023').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere023').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.2 + 0.8;
 					baby.position.z *= Math.random()*0.1 + 0.85;
 					baby.position.y *= Math.random()* 0.7 + 1.5;
@@ -995,6 +1267,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'hummingbird'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1010,6 +1283,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere011').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere011').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.2 + 0.8;
 					baby.position.z *= Math.random()*0.1 + 0.85;
 					baby.position.y *= Math.random()* 0.7 + .5;
@@ -1020,6 +1302,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'elephant'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1031,6 +1314,15 @@ function grow(){
 						if (j == 2){
 							baby.userData.level = 'alpha';
 						}
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Elephant001').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Elephant001').material = copyMaterial;
 
 					baby.position.x *= Math.random()*0.7 + 0.8;
 					baby.position.z *= Math.random()*0.8 + 0.3;
@@ -1041,6 +1333,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'squirrel'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 					
@@ -1052,6 +1345,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Squirrel002').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Squirrel002').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.7 + 0.8;
 					baby.position.z *= Math.random()*0.8 + 0.2;
 					baby.position.y *= Math.random()* 0.01 + 0.97;
@@ -1061,6 +1363,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'polarbear'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1072,6 +1375,15 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere025').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere025').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.7 + 0.8;
 					baby.position.z *= Math.random()*0.8 + 0.3;
 					baby.position.y *= Math.random()* 0.01 + 0.97;
@@ -1081,6 +1393,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'lizard'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1089,15 +1402,25 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere026').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere026').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.08 + 0.9;
 					baby.position.z *= Math.random()*0.7 + 0.5;
 					baby.position.y *= Math.random()* 0.7 + 0.97;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'frog'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1105,15 +1428,25 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere028').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere028').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.08 + 1;
 					baby.position.z *= Math.random()*0.8 + 0.3;
 					baby.position.y *= Math.random()* 0.9 - 0.1;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'turtle'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1121,54 +1454,102 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere027').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere027').material = copyMaterial;
+
 					baby.position.x *= Math.random()*0.07 + 0.9;
 					baby.position.z *= Math.random()*0.8 + 0.3;
 					baby.position.y *= Math.random()* 0.9 + 0.97;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'butterfly'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere031').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere031').material = copyMaterial;
 						
 					baby.position.x *= Math.random()*0.2 + 0.8;
 					baby.position.z *= Math.random()*0.1 + 0.95;
 					baby.position.y *= Math.random()* 0.9 + 0.5;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'bee'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere030').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere030').material = copyMaterial;
 						
 					baby.position.x *= Math.random()*0.2 + 1;
 					baby.position.z *= Math.random()*0.1 + 0.95;
 					baby.position.y *= Math.random()* 0.5 + 0.97;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'dragonfly'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere029').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere029').material = copyMaterial;
 						
 					baby.position.x *= Math.random()*0.2 + 0.9;
 					baby.position.z *= Math.random()*0.2 + 1.2;
 					baby.position.y *= Math.random()* 0.5 + 0.6;
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'manta'){
 					for(var j = 0; j < 7; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
+						
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere033').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere033').material = copyMaterial;
 
 						if(j < 3 ){
 							baby.userData.level = 'delta';
@@ -1206,6 +1587,15 @@ function grow(){
 					for(var j = 0; j < 6; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+		var copyMaterial = baby.getObjectByName('Sphere032').material.clone();
+						
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+
+		baby.getObjectByName('Sphere032').material = copyMaterial;
+
 						if(j < 2 ){
 							baby.userData.level = 'delta';
 						} 
@@ -1241,6 +1631,15 @@ function grow(){
 				} else {
 					for(var j = 0; j < 8; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+		var copyMaterial = baby.getObjectByName('Dolphin001').material.clone();
+						
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+
+		baby.getObjectByName('Dolphin001').material = copyMaterial;
 
 						if(j < 3 ){
 							baby.userData.level = 'delta';
@@ -1303,11 +1702,26 @@ function earthquakeStart(){
 
 	earthquakeSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
+	
+	for(var aa = 0; aa < 2; aa++){
+		let a = Math.floor(Math.random()*(animalE.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta' || animalE[a].name == 'wolf') {
+			var parentNum = animalE[a].children.length - 1;
+			var mutant = animalE[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalE[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalE[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
+	}
+
 
 }
 function earthquakeStop(){
@@ -1339,8 +1753,11 @@ function earthquakeStop(){
 		scene.getObjectByName("volcano").position.y = 0;
 		scene.getObjectByName("volcano").position.z = 0;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+		
+		for(var aa = 0; aa < 2; aa++){
+			scene.remove(scene.getObjectByName('dead'));
+		}
+
 	}
 
 }, 1000);
@@ -1360,23 +1777,31 @@ function earthquakeStop(){
 	hurricane.play();
 	hurricaneSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
+	}
 
 	}
 
@@ -1394,14 +1819,9 @@ function earthquakeStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
 			
 		}
 	}, 1000);
@@ -1425,43 +1845,36 @@ function earthquakeStop(){
 		volcanoMixer.clipAction( clip ).play();
 	} );
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
-	let i = Math.floor(Math.random()*(animals.length - 1));
-	let j = Math.floor(Math.random()*(animals.length - 1));
-	let k = Math.floor(Math.random()*(animals.length - 1));
-	let l = Math.floor(Math.random()*(animals.length - 1));
-	let m = Math.floor(Math.random()*(animals.length - 1));
-	let n = Math.floor(Math.random()*(animals.length - 1));
-	let o = Math.floor(Math.random()*(animals.length - 1));
-	let p = Math.floor(Math.random()*(animals.length - 1));
-	let q = Math.floor(Math.random()*(animals.length - 1));
-	let r = Math.floor(Math.random()*(animals.length - 1));
+	
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var aa = 0; aa < 20; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
-	scene.add(dead[i]);
-	scene.add(dead[j]);
-	scene.add(dead[k]);
-	scene.add(dead[l]);
-	scene.add(dead[m]);
-	scene.add(dead[n]);
-	scene.add(dead[o]);
-	scene.add(dead[p]);
-	scene.add(dead[q]);
-	scene.add(dead[r]);
+	}
 
 
 
@@ -1485,25 +1898,11 @@ function earthquakeStop(){
 
 			scene.fog = null;
 
-
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 20; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
+			
+	
 		}
 	}, 1000);
 	}
@@ -1697,6 +2096,7 @@ function wildfireStart(){
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 	fireStarted = true;
 
@@ -1715,17 +2115,38 @@ function wildfireStart(){
   scene.fog = new THREE.FogExp2( 0xBE6D58, 0.2 );
   wildfireSound.play();
 
-  let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
+  
+  var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aa = 0; aa < 5; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
+	}
 
 	startFire = new Date();
 
@@ -1744,8 +2165,9 @@ function wildfireStop(){
 		eventLabel.style.visibility = 'hidden'; 
 		animalLabel.style.visibility = 'hidden'; 
 
-		ambientLight.intensity = 0.99;
+		ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 		fireStarted = false;
@@ -1759,11 +2181,10 @@ function wildfireStop(){
 		clearInterval(timer);
 		document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+		for(var aa = 0; aa < 5; aa++){
+			scene.remove(scene.getObjectByName('dead'));
+		}
+
 	}
 
 }, 1000);
@@ -1781,6 +2202,7 @@ function wildfireStop(){
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 
 	scene.getObjectByName("meteorstrike").visible = true;
@@ -1789,23 +2211,42 @@ function wildfireStop(){
 		meteorstrikeMixer.clipAction( clip ).play();
 	} );
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aaa = 0; aaa < animalA.length; aaa++){
+		animalgroup.push(animalA[aaa]);
+	}
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
+	}
+	
 
 	}
 
@@ -1816,8 +2257,9 @@ function wildfireStop(){
 		if (count < 0) {
 			scene.getObjectByName("meteorstrike").visible = false;
 
-			ambientLight.intensity = 0.99;
+			ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 
@@ -1831,14 +2273,9 @@ function wildfireStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
 
 		}
 	}, 1000);
@@ -1888,15 +2325,28 @@ function wildfireStop(){
     sandstorming = new THREE.Points(sandGroup, sandMaterial);
     scene.add(sandstorming);
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
+	for(var aa = 0; aa < 4; aa++){
+		let a = Math.floor(Math.random()*(animalE.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta' || animalE[a].name == 'wolf') {
+			var parentNum = animalE[a].children.length - 1;
+			var mutant = animalE[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalE[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
 
 
 	}
@@ -1907,10 +2357,9 @@ function wildfireStop(){
 		count--;
 		if (count < 0) {
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 4; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
 
 			sandstormSound.pause();
 			sandstormSound.load();
@@ -1973,13 +2422,36 @@ function wildfireStop(){
     scene.add(snowing);
 	snowSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
+	}
 
 
 	}
@@ -1989,9 +2461,11 @@ function wildfireStop(){
 		let timer = setInterval(function () {
 		count--;
 		if (count < 0) {
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+		
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+
 			snowSound.pause();
 			snowSound.load();
 			snowStarted = false;
@@ -2033,21 +2507,40 @@ function wildfireStop(){
     let y;
     let z;
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var aa = 0; aa < 7; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
+
 
     for (var i = 0; i < 10000; i++){
 
@@ -2080,13 +2573,9 @@ function wildfireStop(){
 		if (count < 0) {
 			rainStarted = false;
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 7; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
 
 			rainSound.pause();
 			rainSound.load();
@@ -2127,25 +2616,41 @@ function wildfireStop(){
 		wind[ab].play();
 	}
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
-	let i = Math.floor(Math.random()*(animals.length - 1));
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aa = 0; aa < 9; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
-	scene.add(geneticChange[h]);
-	scene.add(geneticChange[i]);
+	}
 	
 
 
@@ -2161,15 +2666,10 @@ function wildfireStop(){
 				wind[ab].stop();
 			}
 			
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 9; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+			
 
 			for(var i = 0; i < scene.getObjectByName('Forest').children.length; i++){
 				if(scene.getObjectByName('Forest').children[i].type == "Object3D"){
@@ -2218,6 +2718,7 @@ function wildfireStop(){
 
 	ambientLight.intensity = 0.9;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 
 
@@ -2226,21 +2727,44 @@ function wildfireStop(){
 	scene.add(sunlight.target);
 	sunSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aaa = 0; aaa < animalA.length; aaa++){
+		animalgroup.push(animalA[aaa]);
+	}
+	for(var aa = 0; aa < 7; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
+	}
 
 	}
 
@@ -2250,9 +2774,11 @@ function wildfireStop(){
 		count--;
 		if (count < 0) {
 			sunshine = false;
+			scene.remove(sunlight);
 
-		ambientLight.intensity = 0.99;
+		ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 			sunSound.pause();
@@ -2265,13 +2791,13 @@ function wildfireStop(){
 			sunCount = 0.0;
 
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 7; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+
+
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
 
 		}
 	}, 1000);
@@ -2281,7 +2807,12 @@ function wildfireStop(){
 let loadingEnd = document.querySelector('#loading');
 planetStateControl.disable = true;
 
-
+let continents = [];
+let animalE = [];
+let animalD = [];
+let animalG = [];
+let animalB = [];
+let animalA = [];
 
 manager.onLoad = function ( ) {
 	loadingEnd.style.display = 'none';
@@ -2297,41 +2828,42 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("volcano").visible = true;
 	planetStateControl.disable = false;
 
+
+	grow();
+
+
+
 	for(var i = 0; i < animals.length; i++){
 		if(animals[i].userData.level == 'epsilon'){
 			animals[i].visible = true;
+			animalE.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'delta'){
 			animals[i].visible = false;
+			animalD.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'gamma'){
 			animals[i].visible = false;
+			animalG.push(animals[i]);
 		} 
 		if (animals[i].userData.level == 'beta'){
 			animals[i].visible = false;
+			animalB.push(animals[i]);
 		} 
 		if(animals[i].userData.level == 'alpha'){
 			animals[i].visible = false;
+			animalA.push(animals[i]);
 		}
 	}
 
 
-	grow();
-
-	console.log(animalMove);
-	console.log(animals);
-
-	
-	
 	for(var i=0; i < animalMove.length; i++){
 		animalMove[i].play();
 	}
 
-	// for(var m = 0; m < animals.length; m++){
-	// 	animals[m].visible = true;
-	// }
-
-
+	for(var m = 0; m < animals.length; m++){
+		animals[m].visible = true;
+	}
 
 
 
@@ -2347,6 +2879,20 @@ manager.onLoad = function ( ) {
 			trees[n].visible = true;
 		}
 	}
+
+ continents.push(scene.getObjectByName("arctic").children);
+ continents.push(scene.getObjectByName("grassland").children);
+ continents.push(scene.getObjectByName("desert").children);
+ continents.push(scene.getObjectByName("forest").children);
+ continents.push(scene.getObjectByName("snowmountain").children);
+ continents.push(scene.getObjectByName("lake").children);
+ continents.push(scene.getObjectByName("valley").children);
+
+ 	
+	scene.getObjectByName("forest").add(scene.getObjectByName("treeForest"));
+	scene.getObjectByName("lake").add(scene.getObjectByName("treeLake"));
+	scene.getObjectByName("valley").add(scene.getObjectByName("treeValley"));
+
 
 // 	let count = 36;
 // 	let timer = setInterval(function () {
@@ -2367,7 +2913,6 @@ manager.onLoad = function ( ) {
 // }, 1000);
 
 
-	
 };
 
 
@@ -2722,56 +3267,111 @@ planetStateControl.oninput = function(){
 	}
 }
 
-//volcano analytics
+//volcano analytics + continent customization
 
 const raycaster = new THREE.Raycaster(); 
 const pointer = new THREE.Vector2(); 
 var mouseLocation;
 let source = new THREE.Vector3();
-let target = new THREE.Vector3();
+// let mediator = new THREE.Vector3();
+// let target = new THREE.Vector3();
 let picked = false;
 let pickedContinent;
-let drop = false;
 
-console.log(scene);
+var ccStart = false;
+
+ccBuild.onclick = function(){
+	ccStart = true;
+	cc.style.visibility = 'hidden';
+	ccBuild.style.visibility = 'hidden';
+	ccTip.style.visibility = 'visible';
+	ccFinish.style.visibility = 'visible';
+	document.body.style.background = 'linear-gradient(45deg, rgb(0, 186, 108), rgb(0, 167, 206))';
+}
+
+ccFinish.onclick = function(){
+	ccStart = false;
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
+	ccTip.style.visibility = 'hidden';
+	ccFinish.style.visibility = 'hidden';
+	document.body.style.background = defaultBackground;
+}
+
 
 function onPointerMove( event ) { 
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1; 
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1; 
 
+
 	if(picked){
-	const continentTarget = raycaster.intersectObjects( scene.getObjectByName("arctic") );
-	console.log(continentTarget);
-	target = continentTarget[0].point;
 
-	let rotate1 = Math.acos( ( (target.x - 0)*( (target.y - source.y)/source.y * source.x + source.x - 0) + (target.y - target.y)*(source.y - target.y) + (target.z - 0)*( (target.y - source.y)/source.y * source.z + source.z - 0 ) ) 
-	/ Math.sqrt(Math.pow(target.x - 0, 2) + Math.pow(target.y - target.y, 2) + Math.pow(target.z - 0, 2)) / Math.sqrt( Math.pow((target.y - source.y)/source.y * source.x + source.x - 0, 2) + Math.pow(source.y - target.y, 2) + Math.pow((target.y - source.y)/source.y * source.z + source.z - 0, 2) ) );
-
-	scene.getObjectByName(pickedContinent).rotateY(rotate1);
 	
-	let flip;
-	if(target.z > 0){
-		flip = 1;
+	
+
+	if(pickedContinent == "Desert"){
+		
+
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(-pointer.y * 0.4 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+		}
+
+
+
+	} else if (pickedContinent == "Valley"){
+
+		
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateZ(pointer.x * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(pointer.y * 0.5 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+		}
+
+
+	} else if (pickedContinent == "Arctic"){
+		
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(-pointer.y * 0.6 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+		}
+
+
+	} else if (pickedContinent == "Snow_mountain"){
+
+
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateY(pointer.x * Math.PI / 180);
+			continentTransform[i].rotateX(pointer.y * 0.3 * Math.PI / 180);
+		}
+
 	} else {
-		flip = -1;
+
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateZ(-pointer.x * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(-pointer.y * 0.5 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), -pointer.y * 0.7 * Math.PI / 180 );
+		}
+
+
 	}
 
 
-	var axis = new THREE.Vector3( 0, 1, 0 );
-	var angle = rotate1 * Math.PI / 180;
-	source.applyAxisAngle( axis, angle );
-
-	let rotate2 = Math.acos( ( (source.x - source.x) * (source.x - source.x) + (source.y - 0) * (target.y - 0) + (source.z - 0) * (flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0) ) 
-	/ Math.sqrt(Math.pow(source.x - source.x,2) + Math.pow(source.y - 0,2) + Math.pow(source.z - 0,2)) / Math.sqrt(Math.pow(source.x - source.x,2) + Math.pow(target.y - 0,2) + Math.pow(flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0,2)) );
-
-	scene.getObjectByName(pickedContinent).rotateX(rotate2);
 
 
-	let rotate3 = Math.acos( (  (target.x - 0)  *  (source.x - 0)  + (target.y - target.y)  *  (target.y - target.y)  +  (target.z - 0)  *  (flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0)  ) 
-	/ Math.sqrt(Math.pow(target.x - 0,2) + Math.pow(target.y - target.y,2) + Math.pow(target.z - 0,2)) / Math.sqrt( Math.pow(source.x - 0,2) + Math.pow(target.y - target.y,2) + Math.pow(flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0,2)) );
-
-	scene.getObjectByName(pickedContinent).rotateY(rotate3);
-
+	
+	
 
 	renderer.render( scene, camera ); 
 
@@ -2779,22 +3379,13 @@ function onPointerMove( event ) {
 
 	} 
 	
+
+
 window.addEventListener( 'pointermove', onPointerMove ); 
+
+
 window.addEventListener('pointerdown', event =>{
 	mouseLocation = pointer.x;
-
-	const continentIntersect = raycaster.intersectObjects( scene.getObjectByName("arctic") );
-	if(continentIntersect.length>0){
-		picked = true;
-		source = continentIntersect[0].point;
-		pickedContinent = continentIntersect[0].object.name;
-	}
-
-	if (picked){
-		drop = true;
-		picked = false;
-	}
-
 
 	});
 	
@@ -2802,17 +3393,67 @@ window.addEventListener('pointerup', event =>{
 	raycaster.setFromCamera( pointer, camera ); 
 	const intersects = raycaster.intersectObjects( scene.getObjectByName("volcano").children ); 
 
-	if(pointer.x == mouseLocation){
+
+
+	if(pointer.x == mouseLocation && picked == false){
 	
 	if(intersects.length > 0){
 		volcanoAnalytics.style.visibility = 'visible';
 		close.style.visibility = 'visible';
+		renderer.render( scene, camera ); 
 	} 
+
+
+	let continentIntersect = [];
+
+	if(ccStart){
+
+	if( raycaster.intersectObjects( continents[0] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[0] ));
+	}
+
+	if( raycaster.intersectObjects( continents[1] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[1] ));
+	}
+	if( raycaster.intersectObjects( continents[2] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[2] ));
+	}
+	if( raycaster.intersectObjects( continents[3] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[3] ));
+	}
+	if( raycaster.intersectObjects( continents[4] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[4] ));
+	}
+	if( raycaster.intersectObjects( continents[5] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[5] ));
+	}
+	if( raycaster.intersectObjects( continents[6] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[6] ));
+	}
+
+	}
+
+	
+	if(continentIntersect.length > 0){
+		picked = true;
+		source = continentIntersect[0][0].point;
+		console.log(continentIntersect);
+		pickedContinent = continentIntersect[0][0].object.name;
+
+		return;
+		
+	}
+
 	}
 
 
+
+	if (picked){
+		picked = false;
+		pickedContinent = '';
+	}
 	
-	renderer.render( scene, camera ); 
+	
 	
 	});
 
@@ -2852,10 +3493,6 @@ function animate() {
 	});
 
 
-	// console.log("bubbleAction: ");
-	// console.log(bubbleAction);
-	// console.log("history: ");
-	// console.log(history);
 
 	if(bubbleAction.entry_id > history.entry_id){
 		console.log("detected bubble actions");

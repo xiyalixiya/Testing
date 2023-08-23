@@ -21,7 +21,7 @@
 
 
 body{
-    background: linear-gradient(45deg, rgb(255, 253, 232), rgb(219, 245, 254));
+    background: linear-gradient(45deg, rgb(255, 253, 232), rgb(211, 248, 255));
 }
 
 #backdrop{
@@ -219,7 +219,7 @@ h4{
     font-family: ibm_plex_monosemibold;
 }
 
-button{
+#close{
     border: none;
     background-color: transparent;
     visibility:hidden;
@@ -228,25 +228,32 @@ button{
     margin-left:2070px;
 }
 
+#close:hover{
+    cursor: pointer;
+}
+
+#eventHighlighter{
+    position: absolute;
+    margin-top:140px;
+    margin-left:1990px;
+    width:150px;
+}
+
 #event{
     visibility: hidden;
-    position: absolute;
-    margin-top:100px;
-    margin-left:1980px;
+    float:right;
 }
 
 #animalAction{
     visibility: hidden;
-    position: absolute;
-    margin-top:180px;
-    margin-left:1830px;
+    margin-top:20px;
+    float:right;
 }
 
 #podAction{
     visibility:hidden;
-    position: absolute;
-    margin-top:950px;
-    margin-left:1610px;
+    margin-top:550px;
+    float:right;
 }
 
 #EimpactDrop{
@@ -254,4 +261,44 @@ button{
     position: absolute;
     margin-top:850px;
     margin-left:1805px;
+}
+
+#cc{
+    visibility: hidden;
+    position: absolute;
+    margin-top:150px;
+    margin-left:1805px;
+}
+
+#ccBuild{
+    border: none;
+    background-color: transparent;
+    visibility: hidden;
+    position: absolute;
+    margin-top:180px;
+    margin-left:1985px;
+}
+
+#ccBuild:hover{
+    cursor: pointer;
+}
+
+#ccTip{
+    visibility: hidden;
+    position: absolute;
+    margin-top:150px;
+    margin-left:1799px;
+}
+
+#ccFinish{
+    border: none;
+    background-color: transparent;
+    visibility: hidden;
+    position: absolute;
+    margin-top:463px;
+    margin-left:1985px;
+}
+
+#ccFinish:hover{
+    cursor: pointer;
 }
