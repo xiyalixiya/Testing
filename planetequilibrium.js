@@ -6,9 +6,28 @@ import { DRACOLoader } from '/build/DRACOLoader.js';
 
 const clock = new THREE.Clock();
 
+
 let theme = new Audio('mp3/theme.mp3');
-theme.play();
 theme.loop = true;
+
+var playSound = false;
+var startAnimations = false;
+var soundSwitch = document.querySelector('#soundSwitch');
+soundSwitch.style.width = window.innerWidth + 'px';
+soundSwitch.style.height = window.innerHeight + 'px';
+var yes = document.querySelector('#yes');
+var no = document.querySelector('#no');
+yes.onclick = function(){
+	soundSwitch.style.visibility = 'hidden';
+	playSound = true;
+	theme.play();
+	startAnimations = true;
+}
+no.onclick = function(){
+	soundSwitch.style.visibility = 'hidden';
+	playSound = false;
+	startAnimations = true;
+}
 
 let bubbleAction = [];
 let history = [];
@@ -21,7 +40,6 @@ fetch( 'https://api.thingspeak.com/channels/2244255/feeds.json?api_key=2BZD7I9T5
 	history = feeds.feeds[1];
 	});
 
-console.log(history);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -147,7 +165,6 @@ let trees = [];
 let wind = [];
 
 const loader = new GLTFLoader(manager);
-// /node_modules/three/examples/js/libs/draco/gltf/
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/build/gltf/' );
 loader.setDRACOLoader( dracoLoader );
@@ -240,36 +257,36 @@ loader.load(
 
 
 
-loader.load(
-    'glb/fox.glb',
-    function (gltf){
-        const animal = gltf.scene;
-		animal.visible = false;
+// loader.load(
+//     'glb/fox.glb',
+//     function (gltf){
+//         const animal = gltf.scene;
+// 		animal.visible = false;
 
-		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+// 		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
 						
-		animal.getObjectByName('Fox001').material.color.r = material.color.r;
-		animal.getObjectByName('Fox001').material.color.g = material.color.g;
-		animal.getObjectByName('Fox001').material.color.b = material.color.b;
+// 		animal.getObjectByName('Fox001').material.color.r = material.color.r;
+// 		animal.getObjectByName('Fox001').material.color.g = material.color.g;
+// 		animal.getObjectByName('Fox001').material.color.b = material.color.b;
 
 
-        scene.add(animal);
+//         scene.add(animal);
 
-		animal.animations = gltf.animations;
-		animal.name = 'wolf';
-		animal.userData.level = 'epsilon';
-		animal.userData.continent = 'arctic';
-		animals.push(animal);
+// 		animal.animations = gltf.animations;
+// 		animal.name = 'wolf';
+// 		animal.userData.level = 'epsilon';
+// 		animal.userData.continent = 'arctic';
+// 		animals.push(animal);
 
-		let animalMixer = new THREE.AnimationMixer( animal );
-		mixer.push(animalMixer);
-		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
-		animalMove.push(animalMixer.clipAction(animalWalk));
+// 		let animalMixer = new THREE.AnimationMixer( animal );
+// 		mixer.push(animalMixer);
+// 		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
+// 		animalMove.push(animalMixer.clipAction(animalWalk));
 		
 
 
-    }
-);
+//     }
+// );
 
 
 loader.load(
@@ -277,6 +294,8 @@ loader.load(
     function (gltf){
         const wolf = gltf.scene.getObjectByName('wolf');
 		wolf.visible = false;
+		const fox = gltf.scene.getObjectByName('fox');
+		fox.visible = false;
 		
 		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
 						
@@ -284,8 +303,15 @@ loader.load(
 		wolf.getObjectByName('Wolf001').material.color.g = material.color.g;
 		wolf.getObjectByName('Wolf001').material.color.b = material.color.b;
 
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		fox.getObjectByName('Fox001').material.color.r = material.color.r;
+		fox.getObjectByName('Fox001').material.color.g = material.color.g;
+		fox.getObjectByName('Fox001').material.color.b = material.color.b;
 
-		wolf.name = 'fox';
+
+
+		wolf.name = 'wolf';
 		wolf.userData.level = 'epsilon';
 		wolf.userData.continent = 'arctic';
 		wolf.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'wolf' ));
@@ -297,17 +323,17 @@ loader.load(
 		animalMove.push(wolfMixer.clipAction(wolfWalk));
 		animals.push(wolf);
 
-		// fox.name = 'fox';
-		// fox.userData.level = 'epsilon';
-		// fox.userData.continent = 'arctic';
-		// fox.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'fox' ));
-		// scene.add(fox);
+		fox.name = 'fox';
+		fox.userData.level = 'epsilon';
+		fox.userData.continent = 'arctic';
+		fox.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'fox' ));
+		scene.add(fox);
 
-		// let foxMixer = new THREE.AnimationMixer( fox );
-		// mixer.push(foxMixer);
-		// const foxWalk = THREE.AnimationClip.findByName( gltf.animations, 'fox' );
-		// animalMove.push(foxMixer.clipAction(foxWalk));
-		// animals.push(fox);
+		let foxMixer = new THREE.AnimationMixer( fox );
+		mixer.push(foxMixer);
+		const foxWalk = THREE.AnimationClip.findByName( gltf.animations, 'fox' );
+		animalMove.push(foxMixer.clipAction(foxWalk));
+		animals.push(fox);
 
     }
 );
@@ -338,7 +364,7 @@ loader.load(
 		cow.name = 'cow';
 		cow.userData.level = 'epsilon';
 		cow.userData.continent = 'grassland';
-		cow.animations = THREE.AnimationClip.findByName( gltf.animations, 'cow' );
+		cow.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'cow' ));
 		scene.add(cow);
 
 		let cowMixer = new THREE.AnimationMixer( cow );
@@ -350,7 +376,7 @@ loader.load(
 		goat.name = 'goat';
 		goat.userData.level = 'epsilon';
 		goat.userData.continent = 'grassland';
-		goat.animations = THREE.AnimationClip.findByName( gltf.animations, 'goat' );
+		goat.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'goat' ));
 		scene.add(goat);
 
 		let goatMixer = new THREE.AnimationMixer( goat );
@@ -390,7 +416,7 @@ loader.load(
 		tiger.name = 'tiger';
 		tiger.userData.level = 'epsilon';
 		tiger.userData.continent = 'desert';
-		tiger.animations = THREE.AnimationClip.findByName( gltf.animations, 'tiger' );
+		tiger.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'tiger' ));
 		scene.add(tiger);
 
 		let tigerMixer = new THREE.AnimationMixer( tiger );
@@ -402,7 +428,7 @@ loader.load(
 		giraffe.name = 'giraffe';
 		giraffe.userData.level = 'epsilon';
 		giraffe.userData.continent = 'desert';
-		giraffe.animations = THREE.AnimationClip.findByName( gltf.animations, 'giraffe' );
+		giraffe.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'giraffe' ));
 		scene.add(giraffe);
 
 		let giraffeMixer = new THREE.AnimationMixer( giraffe );
@@ -449,7 +475,7 @@ loader.load(
 		paradise.name = 'paradise';
 		paradise.userData.level = 'delta';
 		paradise.userData.continent = 'forest';
-		paradise.animations = THREE.AnimationClip.findByName( gltf.animations, 'paradise' );
+		paradise.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'paradise' ));
 		scene.add(paradise);
 
 		let paradiseMixer = new THREE.AnimationMixer( paradise );
@@ -461,7 +487,7 @@ loader.load(
 		hummingbird.name = 'hummingbird';
 		hummingbird.userData.level = 'delta';
 		hummingbird.userData.continent = 'forest';
-		hummingbird.animations = THREE.AnimationClip.findByName( gltf.animations, 'hummingbird' );
+		hummingbird.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'hummingbird' ));
 		scene.add(hummingbird);
 
 		let hummingbirdMixer = new THREE.AnimationMixer(hummingbird );
@@ -474,7 +500,7 @@ loader.load(
 		eagle.name = 'eagle';
 		eagle.userData.level = 'delta';
 		eagle.userData.continent = 'forest';
-		eagle.animations = THREE.AnimationClip.findByName( gltf.animations, 'eagle' );
+		eagle.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'eagle' ));
 		scene.add(eagle);
 
 		let eagleMixer = new THREE.AnimationMixer( eagle );
@@ -520,7 +546,7 @@ loader.load(
 		polarbear.name = 'polarbear';
 		polarbear.userData.level = 'gamma';
 		polarbear.userData.continent = 'snowmountain';
-		polarbear.animations = THREE.AnimationClip.findByName( gltf.animations, 'polarbear' );
+		polarbear.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'polarbear' ));
 		scene.add(polarbear);
 
 		let polarbearMixer = new THREE.AnimationMixer( polarbear );
@@ -532,7 +558,7 @@ loader.load(
 		squirrel.name = 'squirrel';
 		squirrel.userData.level = 'gamma';
 		squirrel.userData.continent = 'snowmountain';
-		squirrel.animations = THREE.AnimationClip.findByName( gltf.animations, 'squirrel' );
+		squirrel.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'squirrel' ));
 		scene.add(squirrel);
 
 		let squirrelMixer = new THREE.AnimationMixer(squirrel );
@@ -545,7 +571,7 @@ loader.load(
 		elephant.name = 'elephant';
 		elephant.userData.level = 'gamma';
 		elephant.userData.continent = 'snowmountain';
-		elephant.animations = THREE.AnimationClip.findByName( gltf.animations, 'elephant' );
+		elephant.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'elephant' ));
 		scene.add(elephant);
 
 		let elephantMixer = new THREE.AnimationMixer( elephant );
@@ -589,7 +615,7 @@ loader.load(
 		lizard.name = 'lizard';
 		lizard.userData.level = 'beta';
 		lizard.userData.continent = 'lake';
-		lizard.animations = THREE.AnimationClip.findByName( gltf.animations, 'lizard' );
+		lizard.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'lizard' ));
 		scene.add(lizard);
 
 		let lizardMixer = new THREE.AnimationMixer( lizard );
@@ -601,7 +627,7 @@ loader.load(
 		frog.name = 'frog';
 		frog.userData.level = 'beta';
 		frog.userData.continent = 'lake';
-		frog.animations = THREE.AnimationClip.findByName( gltf.animations, 'frog' );
+		frog.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'frog' ));
 		scene.add(frog);
 
 		let frogMixer = new THREE.AnimationMixer(frog );
@@ -614,7 +640,7 @@ loader.load(
 		turtle.name = 'turtle';
 		turtle.userData.level = 'beta';
 		turtle.userData.continent = 'lake';
-		turtle.animations = THREE.AnimationClip.findByName( gltf.animations, 'turtle' );
+		turtle.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'turtle' ));
 		scene.add(turtle);
 
 		let turtleMixer = new THREE.AnimationMixer( turtle );
@@ -656,7 +682,7 @@ loader.load(
 		butterfly.name = 'butterfly';
 		butterfly.userData.level = 'alpha';
 		butterfly.userData.continent = 'valley';
-		butterfly.animations = THREE.AnimationClip.findByName( gltf.animations, 'butterfly' );
+		butterfly.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'butterfly' ));
 		scene.add(butterfly);
 
 		let butterflyMixer = new THREE.AnimationMixer( butterfly );
@@ -668,7 +694,7 @@ loader.load(
 		bee.name = 'bee';
 		bee.userData.level = 'alpha';
 		bee.userData.continent = 'valley';
-		bee.animations = THREE.AnimationClip.findByName( gltf.animations, 'bee' );
+		bee.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'bee' ));
 		scene.add(bee);
 
 		let beeMixer = new THREE.AnimationMixer(bee );
@@ -681,7 +707,7 @@ loader.load(
 		dragonfly.name = 'dragonfly';
 		dragonfly.userData.level = 'alpha';
 		dragonfly.userData.continent = 'valley';
-		dragonfly.animations = THREE.AnimationClip.findByName( gltf.animations, 'dragonfly' );
+		dragonfly.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'dragonfly' ));
 		scene.add(dragonfly);
 
 		let dragonflyMixer = new THREE.AnimationMixer( dragonfly );
@@ -888,8 +914,6 @@ loader.load(
     'glb/meteorstrike.glb',
     function (gltf){
         const meteorstrikeGLB = gltf.scene;
-		console.log('meteorstrike');
-		console.log(gltf);
 		meteorstrikeGLB.name = 'meteorstrike';
 		meteorstrikeGLB.visible = false;
         scene.add(meteorstrikeGLB);
@@ -910,11 +934,11 @@ loader.load(
 // Species growing
 
 let babys = [];
+let move = [];
 
 
 function grow(){
 
-	console.log(animals);
 		for(var i = 0; i < animals.length; i++){
 			if(animals[i].name == 'fox'){
 				scene.getObjectByName('arctic').add(animals[i]);
@@ -942,36 +966,26 @@ function grow(){
 				}
 
 				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
-				var copyMaterial = baby.getObjectByName('Wolf001').material.clone();
+				var copyMaterial = baby.getObjectByName('Fox001').material.clone();
 								
 				copyMaterial.color.r = material.color.r;
 				copyMaterial.color.g = material.color.g;
 				copyMaterial.color.b = material.color.b;
 		
-				baby.getObjectByName('Wolf001').material = copyMaterial;
+				baby.getObjectByName('Fox001').material = copyMaterial;
 
-					// baby.position.x *= Math.random()*0.2 + 0.7;
-					// baby.position.z *= Math.random()*0.2 + 0.8;
-					// baby.position.y *= Math.random()* 0.2 + 1;
-
-
-				
-				baby.position.x *= Math.random()*0.2 + 0.7;
-				baby.position.z *= Math.random()*0.2 + 0.8;
-				baby.position.y *= Math.random()* 0.3 + 1;
-
-
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'fox' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
+				animalMove.push(babyAction);
 				
 				babys.push(baby);
 				scene.getObjectByName('arctic').add(baby);
 				renderer.render( scene, camera );
 
-
-				// let babyMixer = new THREE.AnimationMixer( baby );
-				// mixer.push(babyMixer);
-				// const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'wolf' );
-				// let babyAction = babyMixer.clipAction(babyWalk);
-				// animalMove.push(babyAction);
 
 				}
 
@@ -1003,25 +1017,14 @@ function grow(){
 				}
 
 				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
-				var copyMaterial = baby.getObjectByName('Fox001').material.clone();
+				var copyMaterial = baby.getObjectByName('Wolf001').material.clone();
 								
 				copyMaterial.color.r = material.color.r;
 				copyMaterial.color.g = material.color.g;
 				copyMaterial.color.b = material.color.b;
 		
-				baby.getObjectByName('Fox001').material = copyMaterial;
+				baby.getObjectByName('Wolf001').material = copyMaterial;
 
-				// baby.position.x *= Math.random()*0.2 + 0.7;
-				// baby.position.z *= Math.random()*0.2 + 0.8;
-				// baby.position.y *= Math.random()* 0.3 + 1;
-
-				baby.rotation.x = Math.random()*0.1;
-				baby.rotation.z = Math.random()*0.1;
-				baby.rotation.y = Math.random()*0.1;
-
-
-				
-				
 
 
 				babys.push(baby);
@@ -1032,6 +1035,8 @@ function grow(){
 				mixer.push(babyMixer);
 				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'wolf' );
 				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
 				animalMove.push(babyAction);
 
 				}
@@ -1040,6 +1045,7 @@ function grow(){
 					scene.getObjectByName('grassland').add(animals[i]);
 					for(var j = 0; j < 6; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+						baby.name = 'cow' + j;
 
 						if(j < 2){
 							baby.userData.level = 'delta';
@@ -1066,11 +1072,16 @@ function grow(){
 		
 				baby.getObjectByName('Sphere021').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 0.8;
-					baby.position.y *= Math.random()* 0.3 + 1;
+		
 
-
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'cow' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
+						
 						babys.push(baby);
 						scene.getObjectByName('grassland').add(baby);
 						renderer.render( scene, camera );
@@ -1107,10 +1118,13 @@ function grow(){
 		
 				baby.getObjectByName('Sphere020').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.1 + 1;
-					baby.position.z *= Math.random()*0.1 + 0.8;
-					baby.position.y *= Math.random()* 0.1 + 1;
-
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'goat' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
+				animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('grassland').add(baby);
@@ -1149,9 +1163,13 @@ function grow(){
 				
 						baby.getObjectByName('Tiger002').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.1 + 1;
-					baby.position.z *= Math.random()*0.2 + 0.9;
-					baby.position.y *= Math.random()* 0.1 + 0.9;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'tiger' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
@@ -1188,9 +1206,13 @@ function grow(){
 				
 						baby.getObjectByName('Giraffe001').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.1 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 1;
-					baby.position.y *= Math.random()* 0.1 + 1.05;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'giraffe' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
@@ -1224,9 +1246,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere024').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 0.9;
-					baby.position.y *= Math.random()* 0.7 + 1.5;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'paradise' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('forest').add(baby);
@@ -1258,9 +1284,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere023').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.85;
-					baby.position.y *= Math.random()* 0.7 + 1.5;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'eagle' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('forest').add(baby);
@@ -1292,9 +1322,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere011').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.85;
-					baby.position.y *= Math.random()* 0.7 + .5;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'hummingbird' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 						
 
 						babys.push(baby);
@@ -1324,9 +1358,13 @@ function grow(){
 				
 						baby.getObjectByName('Elephant001').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.01 + 0.98;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'elephant' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
@@ -1354,9 +1392,13 @@ function grow(){
 				
 						baby.getObjectByName('Squirrel002').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.2;
-					baby.position.y *= Math.random()* 0.01 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'squirrel' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
@@ -1384,9 +1426,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere025').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.01 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'polarbear' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
@@ -1411,9 +1457,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere026').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.08 + 0.9;
-					baby.position.z *= Math.random()*0.7 + 0.5;
-					baby.position.y *= Math.random()* 0.7 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'lizard' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('lake').add(baby);
@@ -1437,9 +1487,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere028').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.08 + 1;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.9 - 0.1;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'frog' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('lake').add(baby);
@@ -1463,9 +1517,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere027').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.07 + 0.9;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.9 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'turtle' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('lake').add(baby);
@@ -1485,9 +1543,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere031').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.95;
-					baby.position.y *= Math.random()* 0.9 + 0.5;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'butterfly' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('valley').add(baby);
@@ -1507,9 +1569,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere030').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 1;
-					baby.position.z *= Math.random()*0.1 + 0.95;
-					baby.position.y *= Math.random()* 0.5 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'bee' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('valley').add(baby);
@@ -1529,9 +1595,13 @@ function grow(){
 				
 						baby.getObjectByName('Sphere029').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 0.9;
-					baby.position.z *= Math.random()*0.2 + 1.2;
-					baby.position.y *= Math.random()* 0.5 + 0.6;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'dragonfly' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('valley').add(baby);
@@ -1567,7 +1637,7 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 						
-						baby.rotation.x = Math.random()*1;
+						baby.rotation.x = Math.random()*0.3 + 0.1;
 						baby.rotation.z = Math.random()*1.3;
 						baby.rotation.y = Math.random()*0.6-0.3;
 
@@ -1579,6 +1649,8 @@ function grow(){
 				mixer.push(babyMixer);
 				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'manta' );
 				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
 				animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1624,6 +1696,8 @@ function grow(){
 				mixer.push(babyMixer);
 				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'flyingfish' );
 				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
 				animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1669,6 +1743,8 @@ function grow(){
 						mixer.push(babyMixer);
 						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'dolphin' );
 						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
 						animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1679,8 +1755,14 @@ function grow(){
 	
 			animals = animals.concat(babys);
 	
+		for(var p = 0; p < animals.length; p++){
+			var newPosition = [];
+			newPosition.push(Math.random() * 15);
+			newPosition.push(Math.random() * 15);
+			newPosition.push(-Math.random() * 5);
+			move.push(newPosition);
+		}
 		
-
 
 }
 
@@ -1700,13 +1782,16 @@ function earthquakeStart(){
 
 	earthquakeStarted = true;
 
-	earthquakeSound.play();
+	if(playSound){
+		earthquakeSound.play();
+	}
+	
 
 	
 	for(var aa = 0; aa < 2; aa++){
 		let a = Math.floor(Math.random()*(animalE.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta' || animalE[a].name == 'wolf') {
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta') {
 			var parentNum = animalE[a].children.length - 1;
 			var mutant = animalE[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -1775,7 +1860,9 @@ function earthquakeStop(){
 
 	scene.getObjectByName("hurricane").visible = true;
 	hurricane.play();
+	if(playSound){
 	hurricaneSound.play();
+	}
 
 	var animalgroup = [];
 	for(var e = 0; e < animalE.length; e++){
@@ -1784,10 +1871,10 @@ function earthquakeStop(){
 	for(var d = 0; d < animalD.length; d++){
 		animalgroup.push(animalD[d]);
 	}
+	console.log(animalgroup);
 	for(var aa = 0; aa < 8; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
-		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -1795,6 +1882,7 @@ function earthquakeStop(){
 			var mutant = animalgroup[a].children;
 			var num = mutant.length - 1;
 		}
+
 		
 		animalgroup[a].visible = false;
 		
@@ -1840,7 +1928,10 @@ function earthquakeStop(){
 
 	scene.fog = new THREE.FogExp2( 0xCE4A21, 0.15 );
 
+	if(playSound){
 	volcanoSound.play();
+	}
+
 	volcano.forEach( function ( clip ) {
 		volcanoMixer.clipAction( clip ).play();
 	} );
@@ -1860,7 +1951,7 @@ function earthquakeStop(){
 	for(var aa = 0; aa < 20; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2102,7 +2193,6 @@ function wildfireStart(){
 
   for(var i = 0; i < 10; i++){
 	var fire = new THREE.SphereGeometry( .2, 150, 150 ); 
-    // var fireMaterial = new THREE.MeshStandardMaterial( { color: '#FF7D5C', emissive: '#FF7D5C' , emissiveIntensity: 0.8} ); 
 	  
     var fireball = new THREE.Mesh( fire, fireMaterial ); 
 	fireball.position.x = Math.random()*2.3 * 2 - 2.3;
@@ -2113,8 +2203,9 @@ function wildfireStart(){
 	scene.add(fireball);
   }
   scene.fog = new THREE.FogExp2( 0xBE6D58, 0.2 );
+  if(playSound){
   wildfireSound.play();
-
+  }
   
   var animalgroup = [];
 	for(var e = 0; e < animalE.length; e++){
@@ -2132,7 +2223,7 @@ function wildfireStart(){
 	for(var aa = 0; aa < 5; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2150,7 +2241,6 @@ function wildfireStart(){
 
 	startFire = new Date();
 
-	console.log(scene);
 
 }
 
@@ -2206,7 +2296,9 @@ function wildfireStop(){
 	scene.remove(hemisphereLight);
 
 	scene.getObjectByName("meteorstrike").visible = true;
+	if(playSound){
 	meteorstrikeSound.play();
+	}
 	meteorstrike.forEach( function ( clip ) {
 		meteorstrikeMixer.clipAction( clip ).play();
 	} );
@@ -2231,7 +2323,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 8; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2300,7 +2392,9 @@ function wildfireStop(){
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(193, 193, 178), rgb(212, 192, 147))';
 
+	if(playSound){
 	sandstormSound.play();
+	}
 	scene.fog = new THREE.FogExp2( 0xC29460, 0.3 );
 
 	sandstormStarted = true;
@@ -2328,7 +2422,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 4; aa++){
 		let a = Math.floor(Math.random()*(animalE.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta' || animalE[a].name == 'wolf') {
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta') {
 			var parentNum = animalE[a].children.length - 1;
 			var mutant = animalE[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2336,6 +2430,7 @@ function wildfireStop(){
 			var mutant = animalE[a].children;
 			var num = mutant.length - 1;
 		}
+
 		
 		var copyMaterial = mutant[num].material.clone();
 		copyMaterial.color.r = material.color.r;
@@ -2420,7 +2515,9 @@ function wildfireStop(){
     let snowMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.2});
     snowing = new THREE.Points(snowGroup, snowMaterial);
     scene.add(snowing);
+	if(playSound){
 	snowSound.play();
+	}
 
 	
 	var animalgroup = [];
@@ -2433,7 +2530,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 8; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2441,6 +2538,7 @@ function wildfireStop(){
 			var mutant = animalgroup[a].children;
 			var num = mutant.length - 1;
 		}
+
 		
 		var copyMaterial = mutant[num].material.clone();
 		copyMaterial.color.r = material.color.r;
@@ -2521,7 +2619,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 7; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2561,7 +2659,9 @@ function wildfireStop(){
     let rainMaterial = new THREE.PointsMaterial({color: 0xcccccc, size: 0.2});
     raining = new THREE.Points(rainGroup, rainMaterial);
     scene.add(raining);
+	if(playSound){
 	rainSound.play();
+	}
 
 
 	}
@@ -2610,8 +2710,10 @@ function wildfireStop(){
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(223, 219, 247), rgb(234, 255, 246))';
 
+	if(playSound){
 	windSound.play();
-	
+	}
+
 	for (var ab = 0; ab < wind.length; ab++){
 		wind[ab].play();
 	}
@@ -2632,7 +2734,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 9; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2725,7 +2827,10 @@ function wildfireStop(){
 	sunshine = true;
 	scene.add(sunlight);
 	scene.add(sunlight.target);
+
+	if(playSound){
 	sunSound.play();
+	}
 
 	var animalgroup = [];
 	for(var e = 0; e < animalE.length; e++){
@@ -2746,7 +2851,7 @@ function wildfireStop(){
 	for(var aa = 0; aa < 7; aa++){
 		let a = Math.floor(Math.random()*(animalgroup.length - 1));
 		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
-		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta' || animalgroup[a].name == 'wolf') {
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
 			var parentNum = animalgroup[a].children.length - 1;
 			var mutant = animalgroup[a].children[parentNum].children;
 			var num = mutant.length - 1;
@@ -2821,16 +2926,17 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("arctic").visible = true;
 	scene.getObjectByName("grassland").visible = true;
 	scene.getObjectByName("desert").visible = true;
-	scene.getObjectByName("forest").visible = true;
-	scene.getObjectByName("snowmountain").visible = true;
-	scene.getObjectByName("lake").visible = true;
-	scene.getObjectByName("valley").visible = true;
+	scene.getObjectByName("forest").visible = false;
+	scene.getObjectByName("snowmountain").visible = false;
+	scene.getObjectByName("lake").visible = false;
+	scene.getObjectByName("valley").visible = false;
 	scene.getObjectByName("volcano").visible = true;
 	planetStateControl.disable = false;
 
 
 	grow();
 
+	
 
 
 	for(var i = 0; i < animals.length; i++){
@@ -2861,9 +2967,9 @@ manager.onLoad = function ( ) {
 		animalMove[i].play();
 	}
 
-	for(var m = 0; m < animals.length; m++){
-		animals[m].visible = true;
-	}
+	// for(var m = 0; m < animals.length; m++){
+	// 	animals[m].visible = true;
+	// }
 
 
 
@@ -2893,24 +2999,6 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("lake").add(scene.getObjectByName("treeLake"));
 	scene.getObjectByName("valley").add(scene.getObjectByName("treeValley"));
 
-
-// 	let count = 36;
-// 	let timer = setInterval(function () {
-// 	count--;
-// 	if (count == 33) {
-// 		earthquakeStart();
-// 		earthquakeStop();
-// 	} 
-// 	if(count == 15){
-// 		sandstormStart();
-// 		sandstormStop();
-// 	}
-
-// 	if (count == 0){
-// 		clearInterval(timer);
-// 	}
-
-// }, 1000);
 
 
 };
@@ -3314,23 +3402,34 @@ function onPointerMove( event ) {
 
 		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
 		for(var i = 0; i < continentTransform.length; i++){
-			continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
-			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
-			continentTransform[i].rotateX(-pointer.y * 0.4 * Math.PI / 180);
-			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			if(continentTransform[i].type != 'Object3D' ){
+				continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
+				continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+				continentTransform[i].rotateX(-pointer.y * 0.4 * Math.PI / 180);
+				continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
+			
 		}
 
 
 
 	} else if (pickedContinent == "Valley"){
-
-		
 		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
 		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
 			continentTransform[i].rotateZ(pointer.x * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
 			continentTransform[i].rotateX(pointer.y * 0.5 * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
 		}
 
 
@@ -3338,10 +3437,16 @@ function onPointerMove( event ) {
 		
 		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
 		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
 			continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
 			continentTransform[i].rotateX(-pointer.y * 0.6 * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
 		}
 
 
@@ -3358,10 +3463,16 @@ function onPointerMove( event ) {
 
 		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
 		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
 			continentTransform[i].rotateZ(-pointer.x * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
 			continentTransform[i].rotateX(-pointer.y * 0.5 * Math.PI / 180);
 			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), -pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += -pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
 		}
 
 
@@ -3437,7 +3548,6 @@ window.addEventListener('pointerup', event =>{
 	if(continentIntersect.length > 0){
 		picked = true;
 		source = continentIntersect[0][0].point;
-		console.log(continentIntersect);
 		pickedContinent = continentIntersect[0][0].object.name;
 
 		return;
@@ -3478,6 +3588,8 @@ controls.update();
 let rotateHandle = 0;
 
 
+
+
 function animate() {
 	requestAnimationFrame( animate );
 	controls.update();
@@ -3492,12 +3604,29 @@ function animate() {
 	bubbleAction = feeds.feeds[1];
 	});
 
+	if(startAnimations){
+		let count = 36;
+		let timer = setInterval(function () {
+		count--;
+		if (count == 33) {
+			earthquakeStart();
+			earthquakeStop();
+		} 
+		if(count == 15){
+			sandstormStart();
+			sandstormStop();
+		}
+	
+		if (count == 0){
+			clearInterval(timer);
+		}
+	
+	}, 1000);
+	startAnimations = false;
+	}
 
 
 	if(bubbleAction.entry_id > history.entry_id){
-		console.log("detected bubble actions");
-		console.log(bubbleAction);
-		console.log(history);
 		if (bubbleAction.field1 == "sun"){
 			sunStart();
 			sunStop();
@@ -3505,7 +3634,6 @@ function animate() {
 
 	history = Object.assign({}, bubbleAction);
 
-	console.log(history);
 
 	}
 
@@ -3580,7 +3708,7 @@ function animate() {
             function(a){
                 a.y -= Math.random()*1;
                 if(Math.sqrt(Math.pow(a.x,2)+Math.pow(a.y,2)+Math.pow(a.z,2)) < 30){
-                    a.y -= 60;
+                    a.y -= 30;
                 }
             }
         );
@@ -3600,7 +3728,7 @@ function animate() {
             function(a){
                 a.y -= Math.random()*1;
                 if(Math.sqrt(Math.pow(a.x,2)+Math.pow(a.y,2)+Math.pow(a.z,2)) < 30){
-                    a.y -= 60;
+                    a.y -= 30;
                 }
             }
         );
@@ -3623,6 +3751,15 @@ function animate() {
 
 	for(var m = 0; m<dead.length; m++){
 		dead[m].rotation.y += 0.1;
+	}
+
+
+	for (var p = 0; p < animals.length; p++){
+		if(animals[p].name != 'flyingfish' && animals[p].name != 'manta' && animals[p].name != 'dolphin'){
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), move[p][0] * Math.PI / 180 );
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), move[p][1] * Math.PI / 180 );
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), move[p][2] * Math.PI / 180 );
+		}
 	}
 
 	scene.rotation.y -= 0.001;

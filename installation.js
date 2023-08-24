@@ -20,7 +20,6 @@ fetch( 'https://api.thingspeak.com/channels/2244255/feeds.json?api_key=2BZD7I9T5
 	history = feeds.feeds[1];
 	});
 
-console.log(history);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -133,7 +132,11 @@ let trees = [];
 let wind = [];
 
 const loader = new GLTFLoader(manager);
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath( '/build/gltf/' );
+loader.setDRACOLoader( dracoLoader );
 
+dracoLoader.preload();
 
 loader.load(
     'glb/manta.glb',
