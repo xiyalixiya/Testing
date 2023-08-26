@@ -2,12 +2,14 @@ import * as THREE from '../build/three.module.js';
 import { OrbitControls } from '/build/OrbitControls.js';
 import { GLTFLoader } from '/build/GLTFLoader.js';
 import {SkeletonUtils} from '/build/SkeletonUtils.js';
+import { DRACOLoader } from '/build/DRACOLoader.js';
 
 const clock = new THREE.Clock();
 
+
 let theme = new Audio('mp3/theme.mp3');
-// theme.play();
 theme.loop = true;
+
 
 let bubbleAction = [];
 let history = [];
@@ -27,20 +29,26 @@ const xAxis = new THREE.Vector3(1,0,0);
 const yAxis = new THREE.Vector3(0,1,0);
 const zAxis = new THREE.Vector3(0,0,1);
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.99);
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.70);
 scene.add(ambientLight);
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
 scene.add(hemisphereLight);
-const directionalLight1 = new THREE.DirectionalLight(0xFFFAA5, 0.1);
+const directionalLight1 = new THREE.DirectionalLight(0xFFFAA5, 0.4);
 directionalLight1.target.position.set(0,0,0);
 directionalLight1.position.set(3,3,3);
 scene.add(directionalLight1);
 scene.add(directionalLight1.target);
+const directionalLight2 = new THREE.DirectionalLight(0xFFFAA5, 0.3);
+directionalLight2.target.position.set(0,0,0);
+directionalLight2.position.set(-3,0,-3);
+scene.add(directionalLight2);
+scene.add(directionalLight2.target);
 
 
 let backdrop = document.querySelector('#backdrop');
 let planetStateControl = document.querySelector('#planetStateControl');
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.gammaOutput = true;
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.domElement.style.position = 'absolute';
 document.body.insertBefore( renderer.domElement, planetStateControl);
@@ -51,10 +59,12 @@ const planet = new THREE.SphereGeometry( 2, 80, 80 );
 const materialPlanet = new THREE.MeshLambertMaterial( { color: '#31598C' } ); 
 const spherePlanet = new THREE.Mesh( planet, materialPlanet ); 
 const ocean = new THREE.SphereGeometry( 2.28, 80, 80 ); 
-const materialOcean = new THREE.MeshLambertMaterial( { color: '#8FD6ED', transparent:true, opacity:0.98 } ); 
+const materialOcean = new THREE.MeshLambertMaterial( { color: '#48D2FF', transparent:true, opacity:0.98 } ); 
 const sphereOcean = new THREE.Mesh( ocean, materialOcean ); 
 
-let defaultBackground = 'linear-gradient(45deg, rgb(255, 255, 250), rgb(219, 245, 254))';
+let defaultBackground = 'linear-gradient(45deg, rgb(255, 253, 232), rgb(211, 248, 255))';
+// let defaultBackground = 'linear-gradient(45deg, rgb(0, 96, 41), rgb(0, 96, 41))';
+document.body.style.background = defaultBackground;
 let planetState = document.querySelector('#state');
 let volcanoAnalytics = document.querySelector('#volcano');
 let EimpactDrop = document.querySelector('#EimpactDrop');
@@ -73,6 +83,11 @@ let insectNum = document.querySelector('#insectNum');
 let eventLabel = document.querySelector('#event');
 let animalLabel = document.querySelector('#animalAction');
 let podLabel = document.querySelector('#podAction');
+let cc = document.querySelector('#cc');
+let ccTip = document.querySelector('#ccTip');
+let ccBuild = document.querySelector('#ccBuild');
+let ccFinish = document.querySelector('#ccFinish');
+
 
 speciesNum.style.marginLeft = '270px';
 forestIcon.style.visibility = 'hidden';
@@ -80,7 +95,8 @@ snowmountainIcon.style.visibility = 'hidden';
 lakeIcon.style.visibility = 'hidden';
 valleyIcon.style.visibility = 'hidden';
 
-const lowLevelAnimal = ['#E9F6AD', '#F1CFCB', '#9DD2E9', '#FBC7ED', '#FDDFAE'];
+const lowLevelAnimal = ['#B49A79', '#AC7C94', '#B1B178', '#BCA395', '#98C9B2', '#BDA6D3', '#A9C3D1', '#97BF96', '#8792B9', '#A391C6', '#7BB5BF'];
+const highLevelAnimal = ['#D3FA20', '#F7B333', '#37BFFA', '#F741C6', '#21F5E5', '#23EF8A', '#B42BF0', '#F2F211', '#FF9F4D', '#5C62FF', '#F23082'];
 
 
 // load game elements
@@ -111,15 +127,17 @@ let geneticChange = [];
 let dead = [];
 
 function animalAction(){
+	// Math.floor(Math.random()* (animals.length - 1))
 	for(var i = 0; i < animals.length; i++){
 		let copyGene = SkeletonUtils.clone(geneticChangeMesh);
-		copyGene.position.set(animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.x *1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.y*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.z*1.008);
+		copyGene.position.set(animals[i].children[0].position.x *1.008, animals[i].children[0].position.y*1.008, animals[i].children[0].position.z*1.008);
 		geneticChange.push(copyGene);
 	}
 
 	for(var j = 0; j < animals.length; j++){
 		let copyDead = SkeletonUtils.clone(deadMesh);
-		copyDead.position.set(animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.x*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.y*1.008, animals[Math.floor(Math.random()* (animals.length - 1))].children[0].position.z*1.008);
+		copyDead.userData.tag = j;
+		copyDead.position.set(animals[j].children[0].position.x*1.008, animals[j].children[0].position.y*1.008, animals[j].children[0].position.z*1.008);
 		dead.push(copyDead);
 	}
 }
@@ -143,21 +161,17 @@ loader.load(
     function (gltf){
         const animal = gltf.scene;
 		animal.visible = false;
-
-		var material = new THREE.MeshLambertMaterial({
-          color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))]
-        });
-
-		
-
         scene.add(animal);
 
 		gltf.scene.animations = gltf.animations;
 		animal.name = 'manta';
 		animal.userData.level = 'epsilon';
-
 		
-		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Sphere033').material.color.r = material.color.r;
+		animal.getObjectByName('Sphere033').material.color.g = material.color.g;
+		animal.getObjectByName('Sphere033').material.color.b = material.color.b;
 
 		let animalMixer = new THREE.AnimationMixer( animal );
 		mixer.push(animalMixer);
@@ -165,18 +179,7 @@ loader.load(
 		animalMove.push(animalMixer.clipAction(animalWalk));
 		animals.push(animal);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded manta' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -190,24 +193,19 @@ loader.load(
 		animal.name = 'flyingfish';
 		animal.userData.level = 'epsilon';
 
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Sphere032').material.color.r = material.color.r;
+		animal.getObjectByName('Sphere032').material.color.g = material.color.g;
+		animal.getObjectByName('Sphere032').material.color.b = material.color.b;
+
 		let animalMixer = new THREE.AnimationMixer( animal );
 		mixer.push(animalMixer);
 		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'flyingfish' );
 		animalMove.push(animalMixer.clipAction(animalWalk));
 		animals.push(animal);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded flying fish' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -215,6 +213,15 @@ loader.load(
     function (gltf){
         const animal = gltf.scene;
 		animal.visible = false;
+
+		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		animal.getObjectByName('Dolphin001').material.color.r = material.color.r;
+		animal.getObjectByName('Dolphin001').material.color.g = material.color.g;
+		animal.getObjectByName('Dolphin001').material.color.b = material.color.b;
+
+
         scene.add(animal);
 
 		gltf.scene.animations = gltf.animations;
@@ -228,20 +235,43 @@ loader.load(
 		animals.push(animal);
 
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded dolphin' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
+
+
+
+
+// loader.load(
+//     'glb/fox.glb',
+//     function (gltf){
+//         const animal = gltf.scene;
+// 		animal.visible = false;
+
+// 		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+// 		animal.getObjectByName('Fox001').material.color.r = material.color.r;
+// 		animal.getObjectByName('Fox001').material.color.g = material.color.g;
+// 		animal.getObjectByName('Fox001').material.color.b = material.color.b;
+
+
+//         scene.add(animal);
+
+// 		animal.animations = gltf.animations;
+// 		animal.name = 'wolf';
+// 		animal.userData.level = 'epsilon';
+// 		animal.userData.continent = 'arctic';
+// 		animals.push(animal);
+
+// 		let animalMixer = new THREE.AnimationMixer( animal );
+// 		mixer.push(animalMixer);
+// 		const animalWalk = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
+// 		animalMove.push(animalMixer.clipAction(animalWalk));
+		
+
+
+//     }
+// );
 
 
 loader.load(
@@ -251,12 +281,25 @@ loader.load(
 		wolf.visible = false;
 		const fox = gltf.scene.getObjectByName('fox');
 		fox.visible = false;
-        
+		
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		wolf.getObjectByName('Wolf001').material.color.r = material.color.r;
+		wolf.getObjectByName('Wolf001').material.color.g = material.color.g;
+		wolf.getObjectByName('Wolf001').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		fox.getObjectByName('Fox001').material.color.r = material.color.r;
+		fox.getObjectByName('Fox001').material.color.g = material.color.g;
+		fox.getObjectByName('Fox001').material.color.b = material.color.b;
+
+
 
 		wolf.name = 'wolf';
 		wolf.userData.level = 'epsilon';
 		wolf.userData.continent = 'arctic';
-		wolf.animations = THREE.AnimationClip.findByName( gltf.animations, 'wolf' );
+		wolf.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'wolf' ));
 		scene.add(wolf);
 
 		let wolfMixer = new THREE.AnimationMixer( wolf );
@@ -277,18 +320,7 @@ loader.load(
 		animalMove.push(foxMixer.clipAction(foxWalk));
 		animals.push(fox);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded  ) + '% loaded arctic animals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -302,11 +334,22 @@ loader.load(
 		const goat = gltf.scene.getObjectByName('goat');
 		goat.visible = false;
         
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		cow.getObjectByName('Sphere021').material.color.r = material.color.r;
+		cow.getObjectByName('Sphere021').material.color.g = material.color.g;
+		cow.getObjectByName('Sphere021').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		goat.getObjectByName('Sphere020').material.color.r = material.color.r;
+		goat.getObjectByName('Sphere020').material.color.g = material.color.g;
+		goat.getObjectByName('Sphere020').material.color.b = material.color.b;
 
 		cow.name = 'cow';
 		cow.userData.level = 'epsilon';
 		cow.userData.continent = 'grassland';
-		cow.animations = THREE.AnimationClip.findByName( gltf.animations, 'cow' );
+		cow.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'cow' ));
 		scene.add(cow);
 
 		let cowMixer = new THREE.AnimationMixer( cow );
@@ -318,7 +361,7 @@ loader.load(
 		goat.name = 'goat';
 		goat.userData.level = 'epsilon';
 		goat.userData.continent = 'grassland';
-		goat.animations = THREE.AnimationClip.findByName( gltf.animations, 'goat' );
+		goat.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'goat' ));
 		scene.add(goat);
 
 		let goatMixer = new THREE.AnimationMixer( goat );
@@ -327,19 +370,11 @@ loader.load(
 		animalMove.push(goatMixer.clipAction(goatWalk));
 		animals.push(goat);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded grasslandAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
+
+
+
 
 
 loader.load(
@@ -349,12 +384,24 @@ loader.load(
 		tiger.visible = false;
 		const giraffe = gltf.scene.getObjectByName('giraffe');
 		giraffe.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		tiger.getObjectByName('Tiger002').material.color.r = material.color.r;
+		tiger.getObjectByName('Tiger002').material.color.g = material.color.g;
+		tiger.getObjectByName('Tiger002').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		giraffe.getObjectByName('Giraffe001').material.color.r = material.color.r;
+		giraffe.getObjectByName('Giraffe001').material.color.g = material.color.g;
+		giraffe.getObjectByName('Giraffe001').material.color.b = material.color.b;
         
 
 		tiger.name = 'tiger';
 		tiger.userData.level = 'epsilon';
 		tiger.userData.continent = 'desert';
-		tiger.animations = THREE.AnimationClip.findByName( gltf.animations, 'tiger' );
+		tiger.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'tiger' ));
 		scene.add(tiger);
 
 		let tigerMixer = new THREE.AnimationMixer( tiger );
@@ -366,7 +413,7 @@ loader.load(
 		giraffe.name = 'giraffe';
 		giraffe.userData.level = 'epsilon';
 		giraffe.userData.continent = 'desert';
-		giraffe.animations = THREE.AnimationClip.findByName( gltf.animations, 'giraffe' );
+		giraffe.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'giraffe' ));
 		scene.add(giraffe);
 
 		let giraffeMixer = new THREE.AnimationMixer( giraffe );
@@ -375,18 +422,7 @@ loader.load(
 		animalMove.push(giraffeMixer.clipAction(giraffeWalk));
 		animals.push(giraffe);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded desertAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -400,12 +436,31 @@ loader.load(
 		hummingbird.visible = false;
 		const eagle = gltf.scene.getObjectByName('eagle');
 		eagle.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		eagle.getObjectByName('Sphere023').material.color.r = material.color.r;
+		eagle.getObjectByName('Sphere023').material.color.g = material.color.g;
+		eagle.getObjectByName('Sphere023').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		hummingbird.getObjectByName('Sphere011').material.color.r = material.color.r;
+		hummingbird.getObjectByName('Sphere011').material.color.g = material.color.g;
+		hummingbird.getObjectByName('Sphere011').material.color.b = material.color.b;
+
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						
+		paradise.getObjectByName('Sphere024').material.color.r = material.color.r;
+		paradise.getObjectByName('Sphere024').material.color.g = material.color.g;
+		paradise.getObjectByName('Sphere024').material.color.b = material.color.b;
         
 
 		paradise.name = 'paradise';
 		paradise.userData.level = 'delta';
 		paradise.userData.continent = 'forest';
-		paradise.animations = THREE.AnimationClip.findByName( gltf.animations, 'paradise' );
+		paradise.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'paradise' ));
 		scene.add(paradise);
 
 		let paradiseMixer = new THREE.AnimationMixer( paradise );
@@ -417,7 +472,7 @@ loader.load(
 		hummingbird.name = 'hummingbird';
 		hummingbird.userData.level = 'delta';
 		hummingbird.userData.continent = 'forest';
-		hummingbird.animations = THREE.AnimationClip.findByName( gltf.animations, 'hummingbird' );
+		hummingbird.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'hummingbird' ));
 		scene.add(hummingbird);
 
 		let hummingbirdMixer = new THREE.AnimationMixer(hummingbird );
@@ -430,7 +485,7 @@ loader.load(
 		eagle.name = 'eagle';
 		eagle.userData.level = 'delta';
 		eagle.userData.continent = 'forest';
-		eagle.animations = THREE.AnimationClip.findByName( gltf.animations, 'eagle' );
+		eagle.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'eagle' ));
 		scene.add(eagle);
 
 		let eagleMixer = new THREE.AnimationMixer( eagle );
@@ -439,18 +494,7 @@ loader.load(
 		animalMove.push(eagleMixer.clipAction(eagleWalk));
 		animals.push(eagle);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded  ) + '% loaded forestAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -465,12 +509,29 @@ loader.load(
 		squirrel.visible = false;
 		const elephant = gltf.scene.getObjectByName('elephant');
 		elephant.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });			
+		polarbear.getObjectByName('Sphere025').material.color.r = material.color.r;
+		polarbear.getObjectByName('Sphere025').material.color.g = material.color.g;
+		polarbear.getObjectByName('Sphere025').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });						
+		squirrel.getObjectByName('Squirrel002').material.color.r = material.color.r;
+		squirrel.getObjectByName('Squirrel002').material.color.g = material.color.g;
+		squirrel.getObjectByName('Squirrel002').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		elephant.getObjectByName('Elephant001').material.color.r = material.color.r;
+		elephant.getObjectByName('Elephant001').material.color.g = material.color.g;
+		elephant.getObjectByName('Elephant001').material.color.b = material.color.b;
+        
+        
         
 
 		polarbear.name = 'polarbear';
 		polarbear.userData.level = 'gamma';
 		polarbear.userData.continent = 'snowmountain';
-		polarbear.animations = THREE.AnimationClip.findByName( gltf.animations, 'polarbear' );
+		polarbear.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'polarbear' ));
 		scene.add(polarbear);
 
 		let polarbearMixer = new THREE.AnimationMixer( polarbear );
@@ -482,7 +543,7 @@ loader.load(
 		squirrel.name = 'squirrel';
 		squirrel.userData.level = 'gamma';
 		squirrel.userData.continent = 'snowmountain';
-		squirrel.animations = THREE.AnimationClip.findByName( gltf.animations, 'squirrel' );
+		squirrel.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'squirrel' ));
 		scene.add(squirrel);
 
 		let squirrelMixer = new THREE.AnimationMixer(squirrel );
@@ -495,7 +556,7 @@ loader.load(
 		elephant.name = 'elephant';
 		elephant.userData.level = 'gamma';
 		elephant.userData.continent = 'snowmountain';
-		elephant.animations = THREE.AnimationClip.findByName( gltf.animations, 'elephant' );
+		elephant.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'elephant' ));
 		scene.add(elephant);
 
 		let elephantMixer = new THREE.AnimationMixer( elephant );
@@ -504,18 +565,7 @@ loader.load(
 		animalMove.push(elephantMixer.clipAction(elephantWalk));
 		animals.push(elephant);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded  ) + '% loaded snowmountainAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -530,12 +580,27 @@ loader.load(
 		frog.visible = false;
 		const turtle = gltf.scene.getObjectByName('turtle');
 		turtle.visible = false;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		lizard.getObjectByName('Sphere026').material.color.r = material.color.r;
+		lizard.getObjectByName('Sphere026').material.color.g = material.color.g;
+		lizard.getObjectByName('Sphere026').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		frog.getObjectByName('Sphere028').material.color.r = material.color.r;
+		frog.getObjectByName('Sphere028').material.color.g = material.color.g;
+		frog.getObjectByName('Sphere028').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		turtle.getObjectByName('Sphere027').material.color.r = material.color.r;
+		turtle.getObjectByName('Sphere027').material.color.g = material.color.g;
+		turtle.getObjectByName('Sphere027').material.color.b = material.color.b;
         
 
 		lizard.name = 'lizard';
 		lizard.userData.level = 'beta';
 		lizard.userData.continent = 'lake';
-		lizard.animations = THREE.AnimationClip.findByName( gltf.animations, 'lizard' );
+		lizard.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'lizard' ));
 		scene.add(lizard);
 
 		let lizardMixer = new THREE.AnimationMixer( lizard );
@@ -547,7 +612,7 @@ loader.load(
 		frog.name = 'frog';
 		frog.userData.level = 'beta';
 		frog.userData.continent = 'lake';
-		frog.animations = THREE.AnimationClip.findByName( gltf.animations, 'frog' );
+		frog.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'frog' ));
 		scene.add(frog);
 
 		let frogMixer = new THREE.AnimationMixer(frog );
@@ -560,7 +625,7 @@ loader.load(
 		turtle.name = 'turtle';
 		turtle.userData.level = 'beta';
 		turtle.userData.continent = 'lake';
-		turtle.animations = THREE.AnimationClip.findByName( gltf.animations, 'turtle' );
+		turtle.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'turtle' ));
 		scene.add(turtle);
 
 		let turtleMixer = new THREE.AnimationMixer( turtle );
@@ -569,18 +634,7 @@ loader.load(
 		animalMove.push(turtleMixer.clipAction(turtleWalk));
 		animals.push(turtle);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded lakeAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -595,11 +649,25 @@ loader.load(
 		const dragonfly = gltf.scene.getObjectByName('dragonfly');
 		dragonfly.visible = false;
         
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		butterfly.getObjectByName('Sphere031').material.color.r = material.color.r;
+		butterfly.getObjectByName('Sphere031').material.color.g = material.color.g;
+		butterfly.getObjectByName('Sphere031').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		bee.getObjectByName('Sphere030').material.color.r = material.color.r;
+		bee.getObjectByName('Sphere030').material.color.g = material.color.g;
+		bee.getObjectByName('Sphere030').material.color.b = material.color.b;
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });					
+		dragonfly.getObjectByName('Sphere029').material.color.r = material.color.r;
+		dragonfly.getObjectByName('Sphere029').material.color.g = material.color.g;
+		dragonfly.getObjectByName('Sphere029').material.color.b = material.color.b;
 
 		butterfly.name = 'butterfly';
 		butterfly.userData.level = 'alpha';
 		butterfly.userData.continent = 'valley';
-		butterfly.animations = THREE.AnimationClip.findByName( gltf.animations, 'butterfly' );
+		butterfly.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'butterfly' ));
 		scene.add(butterfly);
 
 		let butterflyMixer = new THREE.AnimationMixer( butterfly );
@@ -611,7 +679,7 @@ loader.load(
 		bee.name = 'bee';
 		bee.userData.level = 'alpha';
 		bee.userData.continent = 'valley';
-		bee.animations = THREE.AnimationClip.findByName( gltf.animations, 'bee' );
+		bee.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'bee' ));
 		scene.add(bee);
 
 		let beeMixer = new THREE.AnimationMixer(bee );
@@ -624,7 +692,7 @@ loader.load(
 		dragonfly.name = 'dragonfly';
 		dragonfly.userData.level = 'alpha';
 		dragonfly.userData.continent = 'valley';
-		dragonfly.animations = THREE.AnimationClip.findByName( gltf.animations, 'dragonfly' );
+		dragonfly.animations.push(THREE.AnimationClip.findByName( gltf.animations, 'dragonfly' ));
 		scene.add(dragonfly);
 
 		let dragonflyMixer = new THREE.AnimationMixer( dragonfly );
@@ -633,18 +701,7 @@ loader.load(
 		animalMove.push(dragonflyMixer.clipAction(dragonflyWalk));
 		animals.push(dragonfly);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded valleyAnimals' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -664,6 +721,7 @@ loader.load(
 
 		gltf.scene.animations = gltf.animations;
 		tree.name = 'treeForest';
+		
 
 		for( var i = 0; i < tree.children.length; i++){
 			let windMixer = new THREE.AnimationMixer( tree.children[i] );
@@ -674,18 +732,7 @@ loader.load(
 		}
 
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded tree forest' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -706,18 +753,7 @@ loader.load(
 			trees.push(tree);
 		}
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded tree lake' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -738,18 +774,7 @@ loader.load(
 			trees.push(tree);
 		}
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded tree valley' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -759,18 +784,7 @@ loader.load(
 		arcticGLB.name = 'arctic';
 		arcticGLB.visible = false;
         scene.add(arcticGLB);
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded arctic' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -781,18 +795,7 @@ loader.load(
 		grasslandGLB.visible = false;
         scene.add(grasslandGLB);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded grassland' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -803,18 +806,7 @@ loader.load(
 		desertGLB.visible = false;
         scene.add(desertGLB);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded desert' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -825,18 +817,7 @@ loader.load(
 		forestGLB.visible = false;
         scene.add(forestGLB);
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded forest' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -846,18 +827,7 @@ loader.load(
 		snowmountainGLB.name = 'snowmountain';
 		snowmountainGLB.visible = false;
         scene.add(snowmountainGLB);
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded snowmountain' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 loader.load(
@@ -867,17 +837,6 @@ loader.load(
 		lakeGLB.name = 'lake';
 		lakeGLB.visible = false;
         scene.add(lakeGLB);
-	}, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded lake' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
 	}
 );
 
@@ -888,18 +847,7 @@ loader.load(
 		valleyGLB.name = 'valley';
 		valleyGLB.visible = false;
         scene.add(valleyGLB);
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded valley' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 let volcanoMixer;
@@ -918,18 +866,7 @@ loader.load(
 		mixer.push(volcanoMixer);
 		volcano = gltf.animations;
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded volcano' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 let hurricaneMixer;
@@ -952,18 +889,7 @@ loader.load(
 		hurricane = hurricaneMixer.clipAction( hurricaneClipAction );
 		
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded ) + '% loaded hurricane' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 let meteorstrikeMixer;
@@ -984,18 +910,7 @@ loader.load(
 
 
 
-    }, 
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded) + '% loaded meteorstrike' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
+    }
 );
 
 
@@ -1004,12 +919,14 @@ loader.load(
 // Species growing
 
 let babys = [];
+let move = [];
+
 
 function grow(){
 
-	console.log(animals);
 		for(var i = 0; i < animals.length; i++){
 			if(animals[i].name == 'fox'){
+				scene.getObjectByName('arctic').add(animals[i]);
 				for(var j = 0; j < 8; j++){
 
 				var baby = SkeletonUtils.clone(animals[i]);
@@ -1033,29 +950,27 @@ function grow(){
 					baby.userData.level = 'alpha';
 				}
 
-				// baby.traverse(
-				// 	function(node){
-				// 		if(node.isMesh){
-				// 			node.material = new THREE.MeshBasicMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
-				// 		}
-				// 	}
-				//  );
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Fox001').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Fox001').material = copyMaterial;
 
-					baby.position.x *= Math.random()*0.2 + 0.7;
-					baby.position.z *= Math.random()*0.2 + 0.8;
-					baby.position.y *= Math.random()* 0.2 + 1;
-
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'fox' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
+				animalMove.push(babyAction);
 				
 				babys.push(baby);
 				scene.getObjectByName('arctic').add(baby);
 				renderer.render( scene, camera );
 
-
-				// let babyMixer = new THREE.AnimationMixer( baby );
-				// mixer.push(babyMixer);
-				// const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'fox' );
-				// let babyAction = babyMixer.clipAction(babyWalk);
-				// animalMove.push(babyAction);
 
 				}
 
@@ -1063,41 +978,59 @@ function grow(){
 
 
 			} else if (animals[i].name == 'wolf'){
-				// for(var j = 0; j < 5; j++){
-				// var baby = SkeletonUtils.clone(animals[i]);
+				scene.getObjectByName('arctic').add(animals[i]);
+				for(var j = 0; j < 5; j++){
+				var baby = SkeletonUtils.clone(animals[i]);
 
-				// baby.userData.continent = 'arctic';
+				baby.userData.continent = 'arctic';
 
 
-				// if(j < 2){
-				// 	baby.userData.level = 'delta';
-				// } 
+				if(j < 2){
+					baby.userData.level = 'delta';
+				} 
 
-				// if (j == 2){
-				// 	baby.userData.level = 'gamma';
-				// }
+				if (j == 2){
+					baby.userData.level = 'gamma';
+				}
 
-				// if (j == 3){
-				// 	baby.userData.level = 'beta';
-				// }
+				if (j == 3){
+					baby.userData.level = 'beta';
+				}
 		
-				// if (j == 4){
-				// 	baby.userData.level = 'alpha';
-				// }
+				if (j == 4){
+					baby.userData.level = 'alpha';
+				}
 
-				// baby.position.x *= Math.random()*0.2 + 0.7;
-				// baby.position.z *= Math.random()*0.2 + 0.8;
-				// baby.position.y *= Math.random()* 0.3 + 1;
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Wolf001').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Wolf001').material = copyMaterial;
 
 
-				// babys.push(baby);
-				// scene.getObjectByName('arctic').add(baby);
-				// renderer.render( scene, camera );
-				// }
+
+				babys.push(baby);
+				scene.getObjectByName('arctic').add(baby);
+				renderer.render( scene, camera );
+
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'wolf' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
+				animalMove.push(babyAction);
+
+				}
 				
 				} else if (animals[i].name == 'cow'){
+					scene.getObjectByName('grassland').add(animals[i]);
 					for(var j = 0; j < 6; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+						baby.name = 'cow' + j;
 
 						if(j < 2){
 							baby.userData.level = 'delta';
@@ -1115,11 +1048,25 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 0.8;
-					baby.position.y *= Math.random()* 0.3 + 1;
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Sphere021').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Sphere021').material = copyMaterial;
 
+		
 
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'cow' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
+						
 						babys.push(baby);
 						scene.getObjectByName('grassland').add(baby);
 						renderer.render( scene, camera );
@@ -1127,6 +1074,7 @@ function grow(){
 						}
 
 				} else if (animals[i].name == 'goat'){
+					scene.getObjectByName('grassland').add(animals[i]);
 					for(var j = 0; j < 5; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1146,15 +1094,32 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.1 + 1;
-					baby.position.z *= Math.random()*0.1 + 0.8;
-					baby.position.y *= Math.random()* 0.1 + 1;
+				var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+				var copyMaterial = baby.getObjectByName('Sphere020').material.clone();
+								
+				copyMaterial.color.r = material.color.r;
+				copyMaterial.color.g = material.color.g;
+				copyMaterial.color.b = material.color.b;
+		
+				baby.getObjectByName('Sphere020').material = copyMaterial;
+
+				let babyMixer = new THREE.AnimationMixer( baby );
+				mixer.push(babyMixer);
+				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'goat' );
+				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
+				animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('grassland').add(baby);
 						renderer.render( scene, camera );
+
+
+
 						}
 				} else if (animals[i].name == 'tiger'){
+					scene.getObjectByName('desert').add(animals[i]);
 					for(var j = 0; j < 5; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -1174,15 +1139,30 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.1 + 1;
-					baby.position.z *= Math.random()*0.2 + 0.9;
-					baby.position.y *= Math.random()* 0.1 + 0.9;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Tiger002').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Tiger002').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'tiger' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
 						renderer.render( scene, camera );
+
 						}
 				} else if (animals[i].name == 'giraffe'){
+					scene.getObjectByName('desert').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1202,15 +1182,30 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.1 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 1;
-					baby.position.y *= Math.random()* 0.1 + 1.05;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Giraffe001').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Giraffe001').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'giraffe' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('desert').add(baby);
 						renderer.render( scene, camera );
+
 						}
 				} else if (animals[i].name == 'paradise'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -1227,15 +1222,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.2 + 0.9;
-					baby.position.y *= Math.random()* 0.7 + 1.5;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere024').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere024').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'paradise' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('forest').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'eagle'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
@@ -1251,15 +1260,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.85;
-					baby.position.y *= Math.random()* 0.7 + 1.5;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere023').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere023').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'eagle' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('forest').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'hummingbird'){
+					scene.getObjectByName('forest').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1275,9 +1298,22 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.85;
-					baby.position.y *= Math.random()* 0.7 + .5;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere011').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere011').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'hummingbird' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 						
 
 						babys.push(baby);
@@ -1285,6 +1321,7 @@ function grow(){
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'elephant'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1297,15 +1334,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.01 + 0.98;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Elephant001').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Elephant001').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'elephant' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'squirrel'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 					
@@ -1317,15 +1368,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.2;
-					baby.position.y *= Math.random()* 0.01 + 0.97;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Squirrel002').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Squirrel002').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'squirrel' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'polarbear'){
+					scene.getObjectByName('snowmountain').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1337,15 +1402,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.7 + 0.8;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.01 + 0.97;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere025').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere025').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'polarbear' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
 						scene.getObjectByName('snowmountain').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'lizard'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1354,15 +1433,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.08 + 0.9;
-					baby.position.z *= Math.random()*0.7 + 0.5;
-					baby.position.y *= Math.random()* 0.7 + 0.97;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere026').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere026').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'lizard' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'frog'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1370,15 +1463,29 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.08 + 1;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.9 - 0.1;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere028').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere028').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'frog' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'turtle'){
+					scene.getObjectByName('lake').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 						
@@ -1386,54 +1493,118 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 
-					baby.position.x *= Math.random()*0.07 + 0.9;
-					baby.position.z *= Math.random()*0.8 + 0.3;
-					baby.position.y *= Math.random()* 0.9 + 0.97;
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere027').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere027').material = copyMaterial;
+
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'turtle' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('lake').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'butterfly'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere031').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere031').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 0.8;
-					baby.position.z *= Math.random()*0.1 + 0.95;
-					baby.position.y *= Math.random()* 0.9 + 0.5;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'butterfly' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'bee'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 4; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere030').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere030').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 1;
-					baby.position.z *= Math.random()*0.1 + 0.95;
-					baby.position.y *= Math.random()* 0.5 + 0.97;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'bee' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'dragonfly'){
+					scene.getObjectByName('valley').add(animals[i]);
 					for(var j = 0; j < 3; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere029').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere029').material = copyMaterial;
 						
-					baby.position.x *= Math.random()*0.2 + 0.9;
-					baby.position.z *= Math.random()*0.2 + 1.2;
-					baby.position.y *= Math.random()* 0.5 + 0.6;
+						let babyMixer = new THREE.AnimationMixer( baby );
+						mixer.push(babyMixer);
+						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'dragonfly' );
+						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
+						animalMove.push(babyAction);
 
 						babys.push(baby);
-						scene.getObjectByName('arctic').add(baby);
+						scene.getObjectByName('valley').add(baby);
 						renderer.render( scene, camera );
 						}
 				} else if (animals[i].name == 'manta'){
 					for(var j = 0; j < 7; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
 
+						
+						var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+						var copyMaterial = baby.getObjectByName('Sphere033').material.clone();
+										
+						copyMaterial.color.r = material.color.r;
+						copyMaterial.color.g = material.color.g;
+						copyMaterial.color.b = material.color.b;
+				
+						baby.getObjectByName('Sphere033').material = copyMaterial;
 
 						if(j < 3 ){
 							baby.userData.level = 'delta';
@@ -1451,7 +1622,7 @@ function grow(){
 							baby.userData.level = 'alpha';
 						}
 						
-						baby.rotation.x = Math.random()*1;
+						baby.rotation.x = Math.random()*0.3 + 0.1;
 						baby.rotation.z = Math.random()*1.3;
 						baby.rotation.y = Math.random()*0.6-0.3;
 
@@ -1463,6 +1634,8 @@ function grow(){
 				mixer.push(babyMixer);
 				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'manta' );
 				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
 				animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1470,6 +1643,15 @@ function grow(){
 				} else if (animals[i].name == 'flyingfish'){
 					for(var j = 0; j < 6; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+		var copyMaterial = baby.getObjectByName('Sphere032').material.clone();
+						
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+
+		baby.getObjectByName('Sphere032').material = copyMaterial;
 
 						if(j < 2 ){
 							baby.userData.level = 'delta';
@@ -1499,6 +1681,8 @@ function grow(){
 				mixer.push(babyMixer);
 				const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'flyingfish' );
 				let babyAction = babyMixer.clipAction(babyWalk);
+				babyAction.timeScale = Math.random()*0.8 + 1;
+				babyAction.startAt = Math.random();
 				animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1506,6 +1690,15 @@ function grow(){
 				} else {
 					for(var j = 0; j < 8; j++){
 						var baby = SkeletonUtils.clone(animals[i]);
+
+		var material = new THREE.MeshLambertMaterial({ color: lowLevelAnimal[Math.floor(Math.random()*(lowLevelAnimal.length - 1))] });
+		var copyMaterial = baby.getObjectByName('Dolphin001').material.clone();
+						
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+
+		baby.getObjectByName('Dolphin001').material = copyMaterial;
 
 						if(j < 3 ){
 							baby.userData.level = 'delta';
@@ -1535,6 +1728,8 @@ function grow(){
 						mixer.push(babyMixer);
 						const babyWalk = THREE.AnimationClip.findByName( animals[i].animations, 'dolphin' );
 						let babyAction = babyMixer.clipAction(babyWalk);
+						babyAction.timeScale = Math.random()*0.8 + 1;
+						babyAction.startAt = Math.random();
 						animalMove.push(babyAction);
 
 						renderer.render( scene, camera );
@@ -1545,8 +1740,14 @@ function grow(){
 	
 			animals = animals.concat(babys);
 	
+		for(var p = 0; p < animals.length; p++){
+			var newPosition = [];
+			newPosition.push(Math.random() * 15);
+			newPosition.push(Math.random() * 15);
+			newPosition.push(-Math.random() * 5);
+			move.push(newPosition);
+		}
 		
-
 
 }
 
@@ -1566,13 +1767,31 @@ function earthquakeStart(){
 
 	earthquakeStarted = true;
 
-	earthquakeSound.play();
+	
+		earthquakeSound.play();
+	
+	
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
+	
+	for(var aa = 0; aa < 2; aa++){
+		let a = Math.floor(Math.random()*(animalE.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta') {
+			var parentNum = animalE[a].children.length - 1;
+			var mutant = animalE[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalE[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalE[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
+	}
+
 
 }
 function earthquakeStop(){
@@ -1604,8 +1823,11 @@ function earthquakeStop(){
 		scene.getObjectByName("volcano").position.y = 0;
 		scene.getObjectByName("volcano").position.z = 0;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+		
+		for(var aa = 0; aa < 2; aa++){
+			scene.remove(scene.getObjectByName('dead'));
+		}
+
 	}
 
 }, 1000);
@@ -1625,23 +1847,32 @@ function earthquakeStop(){
 	hurricane.play();
 	hurricaneSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	console.log(animalgroup);
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
+
+	}
 
 	}
 
@@ -1659,14 +1890,9 @@ function earthquakeStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
 			
 		}
 	}, 1000);
@@ -1686,47 +1912,41 @@ function earthquakeStop(){
 	scene.fog = new THREE.FogExp2( 0xCE4A21, 0.15 );
 
 	volcanoSound.play();
+
 	volcano.forEach( function ( clip ) {
 		volcanoMixer.clipAction( clip ).play();
 	} );
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
-	let i = Math.floor(Math.random()*(animals.length - 1));
-	let j = Math.floor(Math.random()*(animals.length - 1));
-	let k = Math.floor(Math.random()*(animals.length - 1));
-	let l = Math.floor(Math.random()*(animals.length - 1));
-	let m = Math.floor(Math.random()*(animals.length - 1));
-	let n = Math.floor(Math.random()*(animals.length - 1));
-	let o = Math.floor(Math.random()*(animals.length - 1));
-	let p = Math.floor(Math.random()*(animals.length - 1));
-	let q = Math.floor(Math.random()*(animals.length - 1));
-	let r = Math.floor(Math.random()*(animals.length - 1));
+	
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var aa = 0; aa < 20; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
-	scene.add(dead[i]);
-	scene.add(dead[j]);
-	scene.add(dead[k]);
-	scene.add(dead[l]);
-	scene.add(dead[m]);
-	scene.add(dead[n]);
-	scene.add(dead[o]);
-	scene.add(dead[p]);
-	scene.add(dead[q]);
-	scene.add(dead[r]);
+	}
 
 
 
@@ -1750,25 +1970,11 @@ function earthquakeStop(){
 
 			scene.fog = null;
 
-
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 20; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
+			
+	
 		}
 	}, 1000);
 	}
@@ -1962,12 +2168,12 @@ function wildfireStart(){
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 	fireStarted = true;
 
   for(var i = 0; i < 10; i++){
 	var fire = new THREE.SphereGeometry( .2, 150, 150 ); 
-    // var fireMaterial = new THREE.MeshStandardMaterial( { color: '#FF7D5C', emissive: '#FF7D5C' , emissiveIntensity: 0.8} ); 
 	  
     var fireball = new THREE.Mesh( fire, fireMaterial ); 
 	fireball.position.x = Math.random()*2.3 * 2 - 2.3;
@@ -1978,23 +2184,44 @@ function wildfireStart(){
 	scene.add(fireball);
   }
   scene.fog = new THREE.FogExp2( 0xBE6D58, 0.2 );
+
   wildfireSound.play();
 
-  let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
+  
+  var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aa = 0; aa < 5; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
+	}
 
 	startFire = new Date();
 
-	console.log(scene);
 
 }
 
@@ -2009,8 +2236,9 @@ function wildfireStop(){
 		eventLabel.style.visibility = 'hidden'; 
 		animalLabel.style.visibility = 'hidden'; 
 
-		ambientLight.intensity = 0.99;
+		ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 		fireStarted = false;
@@ -2024,11 +2252,10 @@ function wildfireStop(){
 		clearInterval(timer);
 		document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+		for(var aa = 0; aa < 5; aa++){
+			scene.remove(scene.getObjectByName('dead'));
+		}
+
 	}
 
 }, 1000);
@@ -2046,31 +2273,53 @@ function wildfireStop(){
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 
 	scene.getObjectByName("meteorstrike").visible = true;
+
 	meteorstrikeSound.play();
+
 	meteorstrike.forEach( function ( clip ) {
 		meteorstrikeMixer.clipAction( clip ).play();
 	} );
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aaa = 0; aaa < animalA.length; aaa++){
+		animalgroup.push(animalA[aaa]);
+	}
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		animalgroup[a].visible = false;
+		
+		dead[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(dead[aa]);
 
-	scene.add(dead[a]);
-	scene.add(dead[b]);
-	scene.add(dead[c]);
-	scene.add(dead[d]);
-	scene.add(dead[e]);
-	scene.add(dead[f]);
-	scene.add(dead[g]);
-	scene.add(dead[h]);
+	}
+	
 
 	}
 
@@ -2081,8 +2330,9 @@ function wildfireStop(){
 		if (count < 0) {
 			scene.getObjectByName("meteorstrike").visible = false;
 
-			ambientLight.intensity = 0.99;
+			ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 
@@ -2096,14 +2346,9 @@ function wildfireStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
-		scene.remove(scene.getObjectByName('dead'));
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('dead'));
+			}
 
 		}
 	}, 1000);
@@ -2128,7 +2373,9 @@ function wildfireStop(){
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(193, 193, 178), rgb(212, 192, 147))';
 
+	
 	sandstormSound.play();
+
 	scene.fog = new THREE.FogExp2( 0xC29460, 0.3 );
 
 	sandstormStarted = true;
@@ -2153,15 +2400,29 @@ function wildfireStop(){
     sandstorming = new THREE.Points(sandGroup, sandMaterial);
     scene.add(sandstorming);
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
+	for(var aa = 0; aa < 4; aa++){
+		let a = Math.floor(Math.random()*(animalE.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalE[a].name == 'flyingfish' || animalE[a].name == 'dolphin' || animalE[a].name == 'manta') {
+			var parentNum = animalE[a].children.length - 1;
+			var mutant = animalE[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalE[a].children;
+			var num = mutant.length - 1;
+		}
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
 
 
 	}
@@ -2172,10 +2433,9 @@ function wildfireStop(){
 		count--;
 		if (count < 0) {
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 4; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
 
 			sandstormSound.pause();
 			sandstormSound.load();
@@ -2236,15 +2496,41 @@ function wildfireStop(){
     let snowMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.2});
     snowing = new THREE.Points(snowGroup, snowMaterial);
     scene.add(snowing);
+	
 	snowSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
+	
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var aa = 0; aa < 8; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
 
 
 	}
@@ -2254,9 +2540,11 @@ function wildfireStop(){
 		let timer = setInterval(function () {
 		count--;
 		if (count < 0) {
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+		
+			for(var aa = 0; aa < 8; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+
 			snowSound.pause();
 			snowSound.load();
 			snowStarted = false;
@@ -2298,21 +2586,40 @@ function wildfireStop(){
     let y;
     let z;
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var aa = 0; aa < 7; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
+
 
     for (var i = 0; i < 10000; i++){
 
@@ -2333,7 +2640,9 @@ function wildfireStop(){
     let rainMaterial = new THREE.PointsMaterial({color: 0xcccccc, size: 0.2});
     raining = new THREE.Points(rainGroup, rainMaterial);
     scene.add(raining);
+
 	rainSound.play();
+
 
 
 	}
@@ -2345,13 +2654,9 @@ function wildfireStop(){
 		if (count < 0) {
 			rainStarted = false;
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 7; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
 
 			rainSound.pause();
 			rainSound.load();
@@ -2387,30 +2692,47 @@ function wildfireStop(){
 	document.body.style.background = 'linear-gradient(45deg, rgb(223, 219, 247), rgb(234, 255, 246))';
 
 	windSound.play();
-	
+
+
 	for (var ab = 0; ab < wind.length; ab++){
 		wind[ab].play();
 	}
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
-	let h = Math.floor(Math.random()*(animals.length - 1));
-	let i = Math.floor(Math.random()*(animals.length - 1));
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aa = 0; aa < 9; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
-	scene.add(geneticChange[h]);
-	scene.add(geneticChange[i]);
+	}
 	
 
 
@@ -2426,15 +2748,10 @@ function wildfireStop(){
 				wind[ab].stop();
 			}
 			
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 9; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+			
 
 			for(var i = 0; i < scene.getObjectByName('Forest').children.length; i++){
 				if(scene.getObjectByName('Forest').children[i].type == "Object3D"){
@@ -2483,29 +2800,56 @@ function wildfireStop(){
 
 	ambientLight.intensity = 0.9;
 	scene.remove(directionalLight1);
+	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 
 
 	sunshine = true;
 	scene.add(sunlight);
 	scene.add(sunlight.target);
+
+
 	sunSound.play();
 
-	let a = Math.floor(Math.random()*(animals.length - 1));
-	let b = Math.floor(Math.random()*(animals.length - 1));
-	let c = Math.floor(Math.random()*(animals.length - 1));
-	let d = Math.floor(Math.random()*(animals.length - 1));
-	let e = Math.floor(Math.random()*(animals.length - 1));
-	let f = Math.floor(Math.random()*(animals.length - 1));
-	let g = Math.floor(Math.random()*(animals.length - 1));
 
-	scene.add(geneticChange[a]);
-	scene.add(geneticChange[b]);
-	scene.add(geneticChange[c]);
-	scene.add(geneticChange[d]);
-	scene.add(geneticChange[e]);
-	scene.add(geneticChange[f]);
-	scene.add(geneticChange[g]);
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var aaa = 0; aaa < animalA.length; aaa++){
+		animalgroup.push(animalA[aaa]);
+	}
+	for(var aa = 0; aa < 7; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
+		geneticChange[aa].position.set(mutant[0].position.x *1.008, mutant[0].position.y*1.008, mutant[0].position.z*1.008);
+		scene.add(geneticChange[aa]);
+
+	}
 
 	}
 
@@ -2515,9 +2859,11 @@ function wildfireStop(){
 		count--;
 		if (count < 0) {
 			sunshine = false;
+			scene.remove(sunlight);
 
-		ambientLight.intensity = 0.99;
+		ambientLight.intensity = 0.7;
 		scene.add(directionalLight1);
+		scene.add(directionalLight2);
 		scene.add(hemisphereLight);
 
 			sunSound.pause();
@@ -2530,13 +2876,13 @@ function wildfireStop(){
 			sunCount = 0.0;
 
 
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
-		scene.remove(scene.getObjectByName('geneticChange'));
+			for(var aa = 0; aa < 7; aa++){
+				scene.remove(scene.getObjectByName('geneticChange'));
+			}
+
+
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
 
 		}
 	}, 1000);
@@ -2546,7 +2892,13 @@ function wildfireStop(){
 let loadingEnd = document.querySelector('#loading');
 planetStateControl.disable = true;
 
-
+let continents = [];
+let animalE = [];
+let animalD = [];
+let animalG = [];
+let animalB = [];
+let animalA = [];
+var rotateSpeed = 0.45;
 
 manager.onLoad = function ( ) {
 	loadingEnd.style.display = 'none';
@@ -2557,46 +2909,83 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("desert").visible = true;
 	scene.getObjectByName("forest").visible = true;
 	scene.getObjectByName("snowmountain").visible = true;
-	scene.getObjectByName("lake").visible = true;
-	scene.getObjectByName("valley").visible = true;
+	scene.getObjectByName("lake").visible = false;
+	scene.getObjectByName("valley").visible = false;
 	scene.getObjectByName("volcano").visible = true;
 	planetStateControl.disable = false;
+
+
+	grow();
+
+
 
 	for(var i = 0; i < animals.length; i++){
 		if(animals[i].userData.level == 'epsilon'){
 			animals[i].visible = true;
+			animalE.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'delta'){
-			animals[i].visible = false;
+			animals[i].visible = true;
+			animalD.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'gamma'){
-			animals[i].visible = false;
+			animals[i].visible = true;
+			animalG.push(animals[i]);
 		} 
 		if (animals[i].userData.level == 'beta'){
 			animals[i].visible = false;
+			animalB.push(animals[i]);
 		} 
 		if(animals[i].userData.level == 'alpha'){
 			animals[i].visible = false;
+			animalA.push(animals[i]);
 		}
 	}
 
+	var animalgroup = [];
+	for(var e = 0; e < animalE.length; e++){
+		animalgroup.push(animalE[e]);
+	}
+	for(var d = 0; d < animalD.length; d++){
+		animalgroup.push(animalD[d]);
+	}
+	for(var g = 0; g < animalG.length; g++){
+		animalgroup.push(animalG[g]);
+	}
+	for(var b = 0; b < animalB.length; b++){
+		animalgroup.push(animalB[b]);
+	}
+	for(var Aa = 0; Aa < animalA.length; Aa++){
+		animalgroup.push(animalA[Aa]);
+	}
+	for(var aa = 0; aa < 30; aa++){
+		let a = Math.floor(Math.random()*(animalgroup.length - 1));
+		var material = new THREE.MeshLambertMaterial({ color: highLevelAnimal[Math.floor(Math.random()*(highLevelAnimal.length - 1))] });
+		if(animalgroup[a].name == 'flyingfish' || animalgroup[a].name == 'dolphin' || animalgroup[a].name == 'manta') {
+			var parentNum = animalgroup[a].children.length - 1;
+			var mutant = animalgroup[a].children[parentNum].children;
+			var num = mutant.length - 1;
+		} else {
+			var mutant = animalgroup[a].children;
+			var num = mutant.length - 1;
+		}
+		
+		var copyMaterial = mutant[num].material.clone();
+		copyMaterial.color.r = material.color.r;
+		copyMaterial.color.g = material.color.g;
+		copyMaterial.color.b = material.color.b;
+		mutant[ mutant.length - 1].material = copyMaterial;
+		
 
-	// grow();
+	}
 
-	console.log(animalMove);
-	console.log(animals);
-
-	
-	
 	for(var i=0; i < animalMove.length; i++){
 		animalMove[i].play();
 	}
 
-	for(var m = 0; m < animals.length; m++){
-		animals[m].visible = true;
-	}
-
-
+	// for(var m = 0; m < animals.length; m++){
+	// 	animals[m].visible = true;
+	// }
 
 
 
@@ -2613,26 +3002,101 @@ manager.onLoad = function ( ) {
 		}
 	}
 
-// 	let count = 36;
-// 	let timer = setInterval(function () {
-// 	count--;
-// 	if (count == 33) {
-// 		earthquakeStart();
-// 		earthquakeStop();
-// 	} 
-// 	if(count == 15){
-// 		sandstormStart();
-// 		sandstormStop();
-// 	}
+ continents.push(scene.getObjectByName("arctic").children);
+ continents.push(scene.getObjectByName("grassland").children);
+ continents.push(scene.getObjectByName("desert").children);
+ continents.push(scene.getObjectByName("forest").children);
+ continents.push(scene.getObjectByName("snowmountain").children);
+ continents.push(scene.getObjectByName("lake").children);
+ continents.push(scene.getObjectByName("valley").children);
 
-// 	if (count == 0){
-// 		clearInterval(timer);
-// 	}
+ 	
+	scene.getObjectByName("forest").add(scene.getObjectByName("treeForest"));
+	scene.getObjectByName("lake").add(scene.getObjectByName("treeLake"));
+	scene.getObjectByName("valley").add(scene.getObjectByName("treeValley"));
 
-// }, 1000);
-
+	let count = 10;
+	let timer = setInterval(function () {
+	count--;
 
 	
+	if(count == 7){
+		rotateSpeed = 0.2;
+	}
+	
+	if(count == 6){
+		rotateSpeed = 0.07;
+		planetState.setAttribute("src", "src/beta.svg");
+		volcanoAnalytics.setAttribute("src", "src/volcanoBeta.svg");
+		ner.textContent = '3';
+		habitatNum.textContent = '6';
+		forestIcon.style.visibility = 'visible';
+		snowmountainIcon.style.visibility = 'visible';
+		lakeIcon.style.visibility = 'visible';
+		valleyIcon.style.visibility = 'hidden';
+		speciesNum.textContent = '18';
+		speciesNum.style.marginLeft = '263px';
+		mammalNum.textContent = '9';
+		avesNum.textContent = '3';
+		reptileNum.textContent = '3';
+		insectNum.textContent = '0';
+		scene.getObjectByName("lake").visible = true;
+		for(var i = 0; i < animals.length; i++){
+			if (animals[i].userData.level == 'beta'){
+				animals[i].visible = true;
+			} 
+		}
+	}
+
+	if (count == 5){
+		rotateSpeed = 0.05;
+	}
+
+	if (count == 4){
+		rotateSpeed = 0.03;
+	}
+
+	if(count == 3){
+		rotateSpeed = 0.01;
+		planetState.setAttribute("src", "src/alpha.svg");
+		volcanoAnalytics.setAttribute("src", "src/volcanoAlpha.svg");
+		ner.textContent = '2';
+		habitatNum.textContent = '7';
+		forestIcon.style.visibility = 'visible';
+		snowmountainIcon.style.visibility = 'visible';
+		lakeIcon.style.visibility = 'visible';
+		valleyIcon.style.visibility = 'visible';
+		speciesNum.textContent = '21';
+		speciesNum.style.marginLeft = '263px';
+		mammalNum.textContent = '9';
+		avesNum.textContent = '3';
+		reptileNum.textContent = '3';
+		insectNum.textContent = '3';
+		scene.getObjectByName("valley").visible = true;
+		for(var i = 0; i < animals.length; i++){
+			if (animals[i].userData.level == 'alpha'){
+				animals[i].visible = true;
+			} 
+		}
+	}
+
+	if (count == 2){
+		rotateSpeed = 0.009;
+	}
+
+	if (count == 1){
+		rotateSpeed = 0.0085;
+	}
+
+	if (count == 0){
+		rotateSpeed = 0.008;
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
+		clearInterval(timer);
+	}
+
+}, 1000);
+
 };
 
 
@@ -2987,79 +3451,148 @@ planetStateControl.oninput = function(){
 	}
 }
 
-//volcano analytics
+//volcano analytics + continent customization
 
 const raycaster = new THREE.Raycaster(); 
 const pointer = new THREE.Vector2(); 
 var mouseLocation;
 let source = new THREE.Vector3();
-let target = new THREE.Vector3();
+// let mediator = new THREE.Vector3();
+// let target = new THREE.Vector3();
 let picked = false;
 let pickedContinent;
-let drop = false;
 
-console.log(scene);
+var ccStart = false;
+
+ccBuild.onclick = function(){
+	ccStart = true;
+	cc.style.visibility = 'hidden';
+	ccBuild.style.visibility = 'hidden';
+	ccTip.style.visibility = 'visible';
+	ccFinish.style.visibility = 'visible';
+	document.body.style.background = 'linear-gradient(45deg, rgb(0, 186, 108), rgb(0, 167, 206))';
+}
+
+ccFinish.onclick = function(){
+	ccStart = false;
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
+	ccTip.style.visibility = 'hidden';
+	ccFinish.style.visibility = 'hidden';
+	document.body.style.background = defaultBackground;
+}
+
 
 function onPointerMove( event ) { 
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1; 
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1; 
 
-	// if(picked){
-	// const continentTarget = raycaster.intersectObjects( scene.getObjectByName("arctic") );
-	// console.log(continentTarget);
-	// target = continentTarget[0].point;
 
-	// let rotate1 = Math.acos( ( (target.x - 0)*( (target.y - source.y)/source.y * source.x + source.x - 0) + (target.y - target.y)*(source.y - target.y) + (target.z - 0)*( (target.y - source.y)/source.y * source.z + source.z - 0 ) ) 
-	// / Math.sqrt(Math.pow(target.x - 0, 2) + Math.pow(target.y - target.y, 2) + Math.pow(target.z - 0, 2)) / Math.sqrt( Math.pow((target.y - source.y)/source.y * source.x + source.x - 0, 2) + Math.pow(source.y - target.y, 2) + Math.pow((target.y - source.y)/source.y * source.z + source.z - 0, 2) ) );
+	if(picked){
 
-	// scene.getObjectByName(pickedContinent).rotateY(rotate1);
 	
-	// let flip;
-	// if(target.z > 0){
-	// 	flip = 1;
-	// } else {
-	// 	flip = -1;
-	// }
+	
+
+	if(pickedContinent == "Desert"){
+		
+
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
+				continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
+				continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+				continentTransform[i].rotateX(-pointer.y * 0.4 * Math.PI / 180);
+				continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
+			
+		}
 
 
-	// var axis = new THREE.Vector3( 0, 1, 0 );
-	// var angle = rotate1 * Math.PI / 180;
-	// source.applyAxisAngle( axis, angle );
 
-	// let rotate2 = Math.acos( ( (source.x - source.x) * (source.x - source.x) + (source.y - 0) * (target.y - 0) + (source.z - 0) * (flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0) ) 
-	// / Math.sqrt(Math.pow(source.x - source.x,2) + Math.pow(source.y - 0,2) + Math.pow(source.z - 0,2)) / Math.sqrt(Math.pow(source.x - source.x,2) + Math.pow(target.y - 0,2) + Math.pow(flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0,2)) );
+	} else if (pickedContinent == "Valley"){
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
+			continentTransform[i].rotateZ(pointer.x * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(pointer.y * 0.5 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
+		}
 
-	// scene.getObjectByName(pickedContinent).rotateX(rotate2);
+
+	} else if (pickedContinent == "Arctic"){
+		
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
+			continentTransform[i].rotateZ(-pointer.x * 1.2 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(-pointer.y * 0.6 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
+		}
 
 
-	// let rotate3 = Math.acos( (  (target.x - 0)  *  (source.x - 0)  + (target.y - target.y)  *  (target.y - target.y)  +  (target.z - 0)  *  (flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0)  ) 
-	// / Math.sqrt(Math.pow(target.x - 0,2) + Math.pow(target.y - target.y,2) + Math.pow(target.z - 0,2)) / Math.sqrt( Math.pow(source.x - 0,2) + Math.pow(target.y - target.y,2) + Math.pow(flip * Math.sqrt(Math.sqrt(Math.pow(target.x,2) + Math.pow(target.z,2)) - Math.pow(target.y,2)) - 0,2)) );
-
-	// scene.getObjectByName(pickedContinent).rotateY(rotate3);
+	} else if (pickedContinent == "Snow_mountain"){
 
 
-	// renderer.render( scene, camera ); 
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			continentTransform[i].rotateY(pointer.x * Math.PI / 180);
+			continentTransform[i].rotateX(pointer.y * 0.3 * Math.PI / 180);
+		}
 
-	// }
+	} else {
+
+		var continentTransform = scene.getObjectByName(pickedContinent).parent.children;
+		for(var i = 0; i < continentTransform.length; i++){
+			if(continentTransform[i].type != 'Object3D' ){
+			continentTransform[i].rotateZ(-pointer.x * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), pointer.x * Math.PI / 180 );
+			continentTransform[i].rotateX(-pointer.y * 0.5 * Math.PI / 180);
+			continentTransform[i].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), -pointer.y * 0.7 * Math.PI / 180 );
+			} else {
+				var slot = animals.indexOf(continentTransform[i]);
+				move[slot][0] += -pointer.y * 0.7; 
+				move[slot][1] += pointer.x; 
+			}
+		}
+
+
+	}
+
+
+
+
+	
+	
+
+	renderer.render( scene, camera ); 
+
+	}
 
 	} 
 	
+
+
 window.addEventListener( 'pointermove', onPointerMove ); 
+
+
 window.addEventListener('pointerdown', event =>{
 	mouseLocation = pointer.x;
-
-	// const continentIntersect = raycaster.intersectObjects( scene.getObjectByName("arctic") );
-	// if(continentIntersect.length>0){
-	// 	picked = true;
-	// 	source = continentIntersect[0].point;
-	// 	pickedContinent = continentIntersect[0].object.name;
-	// }
-
-	// if (picked){
-	// 	drop = true;
-	// 	picked = false;
-	// }
-
 
 	});
 	
@@ -3067,17 +3600,66 @@ window.addEventListener('pointerup', event =>{
 	raycaster.setFromCamera( pointer, camera ); 
 	const intersects = raycaster.intersectObjects( scene.getObjectByName("volcano").children ); 
 
-	if(pointer.x == mouseLocation){
+
+
+	if(pointer.x == mouseLocation && picked == false){
 	
 	if(intersects.length > 0){
 		volcanoAnalytics.style.visibility = 'visible';
 		close.style.visibility = 'visible';
+		renderer.render( scene, camera ); 
 	} 
+
+
+	let continentIntersect = [];
+
+	if(ccStart){
+
+	if( raycaster.intersectObjects( continents[0] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[0] ));
+	}
+
+	if( raycaster.intersectObjects( continents[1] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[1] ));
+	}
+	if( raycaster.intersectObjects( continents[2] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[2] ));
+	}
+	if( raycaster.intersectObjects( continents[3] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[3] ));
+	}
+	if( raycaster.intersectObjects( continents[4] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[4] ));
+	}
+	if( raycaster.intersectObjects( continents[5] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[5] ));
+	}
+	if( raycaster.intersectObjects( continents[6] ).length > 0 ){
+		continentIntersect.push(raycaster.intersectObjects( continents[6] ));
+	}
+
+	}
+
+	
+	if(continentIntersect.length > 0){
+		picked = true;
+		source = continentIntersect[0][0].point;
+		pickedContinent = continentIntersect[0][0].object.name;
+
+		return;
+		
+	}
+
 	}
 
 
+
+	if (picked){
+		picked = false;
+		pickedContinent = '';
+	}
 	
-	renderer.render( scene, camera ); 
+	
 	
 	});
 
@@ -3102,7 +3684,23 @@ controls.update();
 let rotateHandle = 0;
 
 
+
+
 function animate() {
+	
+	if(rotateSpeed > 0.1){
+		rotateSpeed -= 0.0013;
+	} 
+
+	if(rotateSpeed > 0.01 && rotateSpeed < 0.1){
+		rotateSpeed -= 0.0001;
+	}
+
+	if(rotateSpeed > 0.001 && rotateSpeed < 0.01){
+		rotateSpeed -= 0.00002;
+	}
+	
+
 	requestAnimationFrame( animate );
 	controls.update();
 
@@ -3117,15 +3715,9 @@ function animate() {
 	});
 
 
-	// console.log("bubbleAction: ");
-	// console.log(bubbleAction);
-	// console.log("history: ");
-	// console.log(history);
+
 
 	if(bubbleAction.entry_id > history.entry_id){
-		console.log("detected bubble actions");
-		console.log(bubbleAction);
-		console.log(history);
 		if (bubbleAction.field1 == "sun"){
 			sunStart();
 			sunStop();
@@ -3133,7 +3725,6 @@ function animate() {
 
 	history = Object.assign({}, bubbleAction);
 
-	console.log(history);
 
 	}
 
@@ -3176,6 +3767,9 @@ function animate() {
 			scene.getObjectByName("desert").position.x += 0.025;
             scene.getObjectByName("desert").position.y += 0.025;
             scene.getObjectByName("desert").position.z += 0.025;
+			scene.getObjectByName("forest").position.x += 0.025;
+            scene.getObjectByName("forest").position.y += 0.025;
+            scene.getObjectByName("forest").position.z += 0.025;
 			scene.getObjectByName("volcano").position.x += 0.025;
             scene.getObjectByName("volcano").position.y += 0.025;
             scene.getObjectByName("volcano").position.z += 0.025;
@@ -3192,6 +3786,9 @@ function animate() {
 			scene.getObjectByName("desert").position.x -= 0.025;
             scene.getObjectByName("desert").position.y -= 0.025;
             scene.getObjectByName("desert").position.z -= 0.025;
+			scene.getObjectByName("forest").position.x -= 0.025;
+            scene.getObjectByName("forest").position.y -= 0.025;
+            scene.getObjectByName("forest").position.z -= 0.025;
 			scene.getObjectByName("volcano").position.x -= 0.025;
             scene.getObjectByName("volcano").position.y -= 0.025;
             scene.getObjectByName("volcano").position.z -= 0.025;
@@ -3208,7 +3805,7 @@ function animate() {
             function(a){
                 a.y -= Math.random()*1;
                 if(Math.sqrt(Math.pow(a.x,2)+Math.pow(a.y,2)+Math.pow(a.z,2)) < 30){
-                    a.y -= 60;
+                    a.y -= 30;
                 }
             }
         );
@@ -3228,7 +3825,7 @@ function animate() {
             function(a){
                 a.y -= Math.random()*1;
                 if(Math.sqrt(Math.pow(a.x,2)+Math.pow(a.y,2)+Math.pow(a.z,2)) < 30){
-                    a.y -= 60;
+                    a.y -= 30;
                 }
             }
         );
@@ -3253,7 +3850,16 @@ function animate() {
 		dead[m].rotation.y += 0.1;
 	}
 
-	scene.rotation.y -= 0.01;
+
+	for (var p = 0; p < animals.length; p++){
+		if(animals[p].name != 'flyingfish' && animals[p].name != 'manta' && animals[p].name != 'dolphin'){
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 1, 0, 0 ), move[p][0] * Math.PI / 180 );
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), move[p][1] * Math.PI / 180 );
+			animals[p].position.applyAxisAngle( new THREE.Vector3( 0, 1, 0 ), move[p][2] * Math.PI / 180 );
+		}
+	}
+
+	scene.rotation.y -= rotateSpeed;
 
 	renderer.render( scene, camera );
 }

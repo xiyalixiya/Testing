@@ -10,6 +10,7 @@ const clock = new THREE.Clock();
 let theme = new Audio('mp3/theme.mp3');
 theme.loop = true;
 
+
 var playSound = false;
 var startAnimations = false;
 var soundSwitch = document.querySelector('#soundSwitch');
@@ -1784,6 +1785,7 @@ function earthquakeStart(){
 
 	if(playSound){
 		earthquakeSound.play();
+		theme.volume = 0.5;
 	}
 	
 
@@ -1816,6 +1818,7 @@ function earthquakeStop(){
 	if (count < 0) {
 		earthquakeSound.pause();
 		earthquakeSound.load();
+		theme.volume = 1.0;
 		earthquakeStarted = false;
 		eventLabel.style.visibility = 'hidden'; 
 		animalLabel.style.visibility = 'hidden'; 
@@ -1857,11 +1860,13 @@ function earthquakeStop(){
 	animalLabel.setAttribute("src", "src/hurricaneDead.svg");
 	animalLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(61, 39, 80), rgb(47, 63, 114))';
+	
 
 	scene.getObjectByName("hurricane").visible = true;
 	hurricane.play();
 	if(playSound){
 	hurricaneSound.play();
+	theme.volume = 0.5;
 	}
 
 	var animalgroup = [];
@@ -1902,6 +1907,7 @@ function earthquakeStop(){
 			scene.getObjectByName("hurricane").visible = false;
 			hurricaneSound.pause();
 			hurricaneSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
@@ -1926,10 +1932,12 @@ function earthquakeStop(){
 	document.body.style.background = 'linear-gradient(45deg, rgb(163, 131, 107), rgb(201, 101, 86))';
 
 
+
 	scene.fog = new THREE.FogExp2( 0xCE4A21, 0.15 );
 
 	if(playSound){
 	volcanoSound.play();
+	theme.volume = 0.5;
 	}
 
 	volcano.forEach( function ( clip ) {
@@ -1981,6 +1989,7 @@ function earthquakeStop(){
 			} );
 			volcanoSound.pause();
 			volcanoSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			EimpactDrop.style.visibility = 'hidden'; 
@@ -2184,6 +2193,7 @@ function wildfireStart(){
 	eventLabel.style.visibility = 'visible'; 
 	animalLabel.setAttribute("src", "src/wildfireDead.svg");
 	animalLabel.style.visibility = 'visible'; 
+	
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
@@ -2205,6 +2215,7 @@ function wildfireStart(){
   scene.fog = new THREE.FogExp2( 0xBE6D58, 0.2 );
   if(playSound){
   wildfireSound.play();
+  theme.volume = 0.5;
   }
   
   var animalgroup = [];
@@ -2268,6 +2279,7 @@ function wildfireStop(){
 		scene.fog = null;
 		wildfireSound.pause();
 		wildfireSound.load();
+		theme.volume = 1.0;
 		clearInterval(timer);
 		document.body.style.background = defaultBackground;
 
@@ -2289,6 +2301,7 @@ function wildfireStop(){
 	animalLabel.setAttribute("src", "src/meteorstrikeDead.svg");
 	animalLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(4, 44, 12), rgb(11, 20, 83))';
+	
 
 	ambientLight.intensity = 0.5;
 	scene.remove(directionalLight1);
@@ -2298,6 +2311,7 @@ function wildfireStop(){
 	scene.getObjectByName("meteorstrike").visible = true;
 	if(playSound){
 	meteorstrikeSound.play();
+	theme.volume = 0.5;
 	}
 	meteorstrike.forEach( function ( clip ) {
 		meteorstrikeMixer.clipAction( clip ).play();
@@ -2360,6 +2374,7 @@ function wildfireStop(){
 			} );
 			meteorstrikeSound.pause();
 			meteorstrikeSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
@@ -2394,6 +2409,7 @@ function wildfireStop(){
 
 	if(playSound){
 	sandstormSound.play();
+	theme.volume = 0.5;
 	}
 	scene.fog = new THREE.FogExp2( 0xC29460, 0.3 );
 
@@ -2456,8 +2472,10 @@ function wildfireStop(){
 				scene.remove(scene.getObjectByName('geneticChange'));
 			}
 
+			planetStateControl.disabled = false;
 			sandstormSound.pause();
 			sandstormSound.load();
+			theme.volume = 1.0;
 			sandstormStarted = false;
 			scene.fog = null;
 			eventLabel.style.visibility = 'hidden'; 
@@ -2496,27 +2514,30 @@ function wildfireStop(){
     let y;
     let z;
 
-    for (var i = 0; i < 10000; i++){
 
-    x = Math.floor(Math.random()*160)-80;
-    y = Math.floor(Math.random()*160)-80 + 60;
-    z = Math.floor(Math.random()*160)-80;
-    
-    if(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)) < 30){
-        x += Math.floor(Math.random()*20)+20;
-        y += Math.floor(Math.random()*20)+20;
-        z += Math.floor(Math.random()*20)+20;
-    }
 
-    snowflake = new THREE.Vector3(x, y, z);
-    snowGroup.vertices.push(snowflake);
-    }
+	for (var i = 0; i < 30000; i++){
+
+		x = Math.floor(Math.random()*160)-80;
+		y = Math.floor(Math.random()*450)-225 + 200;
+		z = Math.floor(Math.random()*160)-80;
+		
+		if(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)) < 40){
+			x += Math.floor(Math.random()*20)+30;
+			y += Math.floor(Math.random()*20)+30;
+			z += Math.floor(Math.random()*20)+30;
+		}
+	
+		snowflake = new THREE.Vector3(x, y, z);
+		snowGroup.vertices.push(snowflake);
+		}
     
     let snowMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.2});
     snowing = new THREE.Points(snowGroup, snowMaterial);
     scene.add(snowing);
 	if(playSound){
 	snowSound.play();
+	theme.volume = 0.5;
 	}
 
 	
@@ -2566,6 +2587,7 @@ function wildfireStop(){
 
 			snowSound.pause();
 			snowSound.load();
+			theme.volume = 1.0;
 			snowStarted = false;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
@@ -2579,6 +2601,7 @@ function wildfireStop(){
 			snowGroup.verticesNeedUpdate = true;
 			scene.remove(snowing);
 			scene.remove(scene.getObjectByName('geneticChange'));
+			planetStateControl.disabled = false;
 
 		}
 	}, 1000);
@@ -2640,27 +2663,30 @@ function wildfireStop(){
 	}
 
 
-    for (var i = 0; i < 10000; i++){
+  
 
-    x = Math.floor(Math.random()*160)-80;
-    y = Math.floor(Math.random()*160)-80 + 60;
-    z = Math.floor(Math.random()*160)-80;
-    
-    if(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)) < 30){
-        x += Math.floor(Math.random()*20)+20;
-        y += Math.floor(Math.random()*20)+20;
-        z += Math.floor(Math.random()*20)+20;
-    }
+	for (var i = 0; i < 30000; i++){
 
-    rainDrops = new THREE.Vector3(x, y, z);
-    rainGroup.vertices.push(rainDrops);
-    }
+		x = Math.floor(Math.random()*160)-80;
+		y = Math.floor(Math.random()*450)-225 + 200;
+		z = Math.floor(Math.random()*160)-80;
+		
+		if(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)) < 40){
+			x += Math.floor(Math.random()*20)+30;
+			y += Math.floor(Math.random()*20)+30;
+			z += Math.floor(Math.random()*20)+30;
+		}
+	
+		rainDrops = new THREE.Vector3(x, y, z);
+		rainGroup.vertices.push(rainDrops);
+		}
     
     let rainMaterial = new THREE.PointsMaterial({color: 0xcccccc, size: 0.2});
     raining = new THREE.Points(rainGroup, rainMaterial);
     scene.add(raining);
 	if(playSound){
 	rainSound.play();
+	theme.volume = 0.5;
 	}
 
 
@@ -2679,11 +2705,13 @@ function wildfireStop(){
 
 			rainSound.pause();
 			rainSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			podLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			planetStateControl.disabled = false;
 
 			rainGroup.vertices.forEach(function(a){
 				a.y = Math.floor(Math.random()*160)-80;
@@ -2712,6 +2740,7 @@ function wildfireStop(){
 
 	if(playSound){
 	windSound.play();
+	theme.volume = 0.5;
 	}
 
 	for (var ab = 0; ab < wind.length; ab++){
@@ -2789,11 +2818,13 @@ function wildfireStop(){
 
 			windSound.pause();
 			windSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			podLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			planetStateControl.disabled = false;
 		}
 	}, 1000);
 	}
@@ -2830,6 +2861,7 @@ function wildfireStop(){
 
 	if(playSound){
 	sunSound.play();
+	theme.volume = 0.5;
 	}
 
 	var animalgroup = [];
@@ -2888,11 +2920,13 @@ function wildfireStop(){
 
 			sunSound.pause();
 			sunSound.load();
+			theme.volume = 1.0;
 			eventLabel.style.visibility = 'hidden'; 
 			animalLabel.style.visibility = 'hidden'; 
 			podLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			planetStateControl.disabled = false;
 			sunCount = 0.0;
 
 
@@ -2910,7 +2944,8 @@ function wildfireStop(){
 
 
 let loadingEnd = document.querySelector('#loading');
-planetStateControl.disable = true;
+let loadingFinished = false;
+planetStateControl.disabled = true;
 
 let continents = [];
 let animalE = [];
@@ -2921,6 +2956,7 @@ let animalA = [];
 
 manager.onLoad = function ( ) {
 	loadingEnd.style.display = 'none';
+
 	scene.add( spherePlanet );
 	scene.add( sphereOcean );
 	scene.getObjectByName("arctic").visible = true;
@@ -2931,7 +2967,7 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("lake").visible = false;
 	scene.getObjectByName("valley").visible = false;
 	scene.getObjectByName("volcano").visible = true;
-	planetStateControl.disable = false;
+	planetStateControl.disabled = false;
 
 
 	grow();
@@ -2999,7 +3035,9 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("lake").add(scene.getObjectByName("treeLake"));
 	scene.getObjectByName("valley").add(scene.getObjectByName("treeValley"));
 
+	loadingFinished = true;
 
+	
 
 };
 
@@ -3007,6 +3045,8 @@ manager.onLoad = function ( ) {
 planetStateControl.oninput = function(){
 	// Epsilon - Earthquake - Sandstorm
 	if(planetStateControl.value == 1){
+
+	planetStateControl.disabled = true;
 	planetState.setAttribute("src", "src/epsilon.svg");
 	volcanoAnalytics.setAttribute("src", "src/volcanoEpsilon.svg");
 	ner.textContent = '8';
@@ -3075,6 +3115,8 @@ planetStateControl.oninput = function(){
 
 
 	} else if(planetStateControl.value == 2){
+
+	planetStateControl.disabled = true;
 		planetState.setAttribute("src", "src/delta.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoDelta.svg");
 		ner.textContent = '5';
@@ -3142,6 +3184,8 @@ planetStateControl.oninput = function(){
 	}, 1000);
 
 	} else if(planetStateControl.value == 3){
+
+	planetStateControl.disabled = true;
 		planetState.setAttribute("src", "src/gamma.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoGamma.svg");
 		ner.textContent = '4';
@@ -3212,6 +3256,8 @@ planetStateControl.oninput = function(){
 
 
 	} else if (planetStateControl.value == 4){
+
+	planetStateControl.disabled = true;
 		planetState.setAttribute("src", "src/beta.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoBeta.svg");
 		ner.textContent = '3';
@@ -3283,6 +3329,8 @@ planetStateControl.oninput = function(){
 }, 1000);
 
 	} else {
+
+	planetStateControl.disabled = true;
 		planetState.setAttribute("src", "src/alpha.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoAlpha.svg");
 		ner.textContent = '2';
@@ -3604,7 +3652,9 @@ function animate() {
 	bubbleAction = feeds.feeds[1];
 	});
 
-	if(startAnimations){
+	if(startAnimations && loadingFinished == true){
+
+	planetStateControl.disabled = true;
 		let count = 36;
 		let timer = setInterval(function () {
 		count--;
@@ -3741,7 +3791,7 @@ function animate() {
 		sunlight.position.z = Math.sqrt(18)* Math.cos(sunCount * Math.PI);
 		sunlight.position.y = Math.sqrt(18)* Math.sin(sunCountY * Math.PI);
 
-		sunCount += 0.09;
+		sunCount += 0.01;
 		sunCountY += 0.009;
 	}
 
