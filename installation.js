@@ -2898,7 +2898,7 @@ let animalD = [];
 let animalG = [];
 let animalB = [];
 let animalA = [];
-var rotateSpeed = 0.45;
+var rotateSpeed = 0.01;
 
 manager.onLoad = function ( ) {
 	loadingEnd.style.display = 'none';
@@ -2907,8 +2907,8 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("arctic").visible = true;
 	scene.getObjectByName("grassland").visible = true;
 	scene.getObjectByName("desert").visible = true;
-	scene.getObjectByName("forest").visible = true;
-	scene.getObjectByName("snowmountain").visible = true;
+	scene.getObjectByName("forest").visible = false;
+	scene.getObjectByName("snowmountain").visible = false;
 	scene.getObjectByName("lake").visible = false;
 	scene.getObjectByName("valley").visible = false;
 	scene.getObjectByName("volcano").visible = true;
@@ -2925,11 +2925,11 @@ manager.onLoad = function ( ) {
 			animalE.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'delta'){
-			animals[i].visible = true;
+			animals[i].visible = false;
 			animalD.push(animals[i]);
 		}
 		if(animals[i].userData.level == 'gamma'){
-			animals[i].visible = true;
+			animals[i].visible = false;
 			animalG.push(animals[i]);
 		} 
 		if (animals[i].userData.level == 'beta'){
@@ -3015,87 +3015,92 @@ manager.onLoad = function ( ) {
 	scene.getObjectByName("lake").add(scene.getObjectByName("treeLake"));
 	scene.getObjectByName("valley").add(scene.getObjectByName("treeValley"));
 
-	let count = 10;
-	let timer = setInterval(function () {
-	count--;
+
+
+// 	let count = 10;
+// 	let timer = setInterval(function () {
+// 	count--;
 
 	
-	if(count == 7){
-		rotateSpeed = 0.2;
-	}
+// 	if(count == 7){
+// 		rotateSpeed = 0.2;
+// 	}
 	
-	if(count == 6){
-		rotateSpeed = 0.07;
-		planetState.setAttribute("src", "src/beta.svg");
-		volcanoAnalytics.setAttribute("src", "src/volcanoBeta.svg");
-		ner.textContent = '3';
-		habitatNum.textContent = '6';
-		forestIcon.style.visibility = 'visible';
-		snowmountainIcon.style.visibility = 'visible';
-		lakeIcon.style.visibility = 'visible';
-		valleyIcon.style.visibility = 'hidden';
-		speciesNum.textContent = '18';
-		speciesNum.style.marginLeft = '263px';
-		mammalNum.textContent = '9';
-		avesNum.textContent = '3';
-		reptileNum.textContent = '3';
-		insectNum.textContent = '0';
-		scene.getObjectByName("lake").visible = true;
-		for(var i = 0; i < animals.length; i++){
-			if (animals[i].userData.level == 'beta'){
-				animals[i].visible = true;
-			} 
-		}
-	}
+// 	if(count == 6){
+// 		rotateSpeed = 0.07;
+// 		planetState.setAttribute("src", "src/beta.svg");
+// 		volcanoAnalytics.setAttribute("src", "src/volcanoBeta.svg");
+// 		ner.textContent = '3';
+// 		habitatNum.textContent = '6';
+// 		forestIcon.style.visibility = 'visible';
+// 		snowmountainIcon.style.visibility = 'visible';
+// 		lakeIcon.style.visibility = 'visible';
+// 		valleyIcon.style.visibility = 'hidden';
+// 		speciesNum.textContent = '18';
+// 		speciesNum.style.marginLeft = '263px';
+// 		mammalNum.textContent = '9';
+// 		avesNum.textContent = '3';
+// 		reptileNum.textContent = '3';
+// 		insectNum.textContent = '0';
+// 		scene.getObjectByName("lake").visible = true;
+// 		for(var i = 0; i < animals.length; i++){
+// 			if (animals[i].userData.level == 'beta'){
+// 				animals[i].visible = true;
+// 			} 
+// 		}
+// 	}
 
-	if (count == 5){
-		rotateSpeed = 0.05;
-	}
+// 	if (count == 5){
+// 		rotateSpeed = 0.05;
+// 	}
 
-	if (count == 4){
-		rotateSpeed = 0.03;
-	}
+// 	if (count == 4){
+// 		rotateSpeed = 0.03;
+// 	}
 
-	if(count == 3){
-		rotateSpeed = 0.01;
-		planetState.setAttribute("src", "src/alpha.svg");
-		volcanoAnalytics.setAttribute("src", "src/volcanoAlpha.svg");
-		ner.textContent = '2';
-		habitatNum.textContent = '7';
-		forestIcon.style.visibility = 'visible';
-		snowmountainIcon.style.visibility = 'visible';
-		lakeIcon.style.visibility = 'visible';
-		valleyIcon.style.visibility = 'visible';
-		speciesNum.textContent = '21';
-		speciesNum.style.marginLeft = '263px';
-		mammalNum.textContent = '9';
-		avesNum.textContent = '3';
-		reptileNum.textContent = '3';
-		insectNum.textContent = '3';
-		scene.getObjectByName("valley").visible = true;
-		for(var i = 0; i < animals.length; i++){
-			if (animals[i].userData.level == 'alpha'){
-				animals[i].visible = true;
-			} 
-		}
-	}
+// 	if(count == 3){
+// 		rotateSpeed = 0.01;
+// 		planetState.setAttribute("src", "src/alpha.svg");
+// 		volcanoAnalytics.setAttribute("src", "src/volcanoAlpha.svg");
+// 		ner.textContent = '2';
+// 		habitatNum.textContent = '7';
+// 		forestIcon.style.visibility = 'visible';
+// 		snowmountainIcon.style.visibility = 'visible';
+// 		lakeIcon.style.visibility = 'visible';
+// 		valleyIcon.style.visibility = 'visible';
+// 		speciesNum.textContent = '21';
+// 		speciesNum.style.marginLeft = '263px';
+// 		mammalNum.textContent = '9';
+// 		avesNum.textContent = '3';
+// 		reptileNum.textContent = '3';
+// 		insectNum.textContent = '3';
+// 		scene.getObjectByName("valley").visible = true;
+// 		for(var i = 0; i < animals.length; i++){
+// 			if (animals[i].userData.level == 'alpha'){
+// 				animals[i].visible = true;
+// 			} 
+// 		}
+// 	}
 
-	if (count == 2){
-		rotateSpeed = 0.009;
-	}
+// 	if (count == 2){
+// 		rotateSpeed = 0.009;
+// 	}
 
-	if (count == 1){
-		rotateSpeed = 0.0085;
-	}
+// 	if (count == 1){
+// 		rotateSpeed = 0.0085;
+// 	}
 
-	if (count == 0){
-		rotateSpeed = 0.008;
-	cc.style.visibility = 'visible';
-	ccBuild.style.visibility = 'visible';
-		clearInterval(timer);
-	}
+// 	if (count == 0){
+// 		rotateSpeed = 0.008;
+// 	cc.style.visibility = 'visible';
+// 	ccBuild.style.visibility = 'visible';
+// 		clearInterval(timer);
+// 	}
 
-}, 1000);
+// }, 1000);
+
+
+
 
 };
 
@@ -3688,17 +3693,17 @@ let rotateHandle = 0;
 
 function animate() {
 	
-	if(rotateSpeed > 0.1){
-		rotateSpeed -= 0.0013;
-	} 
+	// if(rotateSpeed > 0.1){
+	// 	rotateSpeed -= 0.0013;
+	// } 
 
-	if(rotateSpeed > 0.01 && rotateSpeed < 0.1){
-		rotateSpeed -= 0.0001;
-	}
+	// if(rotateSpeed > 0.01 && rotateSpeed < 0.1){
+	// 	rotateSpeed -= 0.0001;
+	// }
 
-	if(rotateSpeed > 0.001 && rotateSpeed < 0.01){
-		rotateSpeed -= 0.00002;
-	}
+	// if(rotateSpeed > 0.001 && rotateSpeed < 0.01){
+	// 	rotateSpeed -= 0.00002;
+	// }
 	
 
 	requestAnimationFrame( animate );
@@ -3859,7 +3864,7 @@ function animate() {
 		}
 	}
 
-	scene.rotation.y -= rotateSpeed;
+	// scene.rotation.y -= rotateSpeed;
 
 	renderer.render( scene, camera );
 }

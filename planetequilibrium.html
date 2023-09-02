@@ -18,6 +18,8 @@
         
         <img id="sliderTick" src = "src/slidertick.svg">
         <input id = "planetStateControl" type="range" min="1" max="5" value="1" step="1">
+        <img id="sliderTip" src = "src/slidertip.svg">
+        <div id = "sliderTipBox"></div>
 
         <img id="loading" src ="src/loading.gif">
 
@@ -97,6 +99,34 @@
         <input type="radio" id="no"/>
         <label for="no" id="noValue">No, ...</label>
       </div>
+
+
+
+      <!-- animation icon -->
+
+      <div id="animationIcon">
+        <h3 id="naturalEventIconText">Natural event</h3> 
+        <div id = "naturalEventIcon">
+            <button class="ai" id = "earthquakeIcon"><img src = "src/earthquakeIcon.png"></button> 
+            <button class="ai" id = "hurricaneIcon"><img src = "src/hurricaneIcon.svg"> </button>
+            <button class="ai" id = "wildfireIcon"><img src = "src/wildfireIcon.svg"> </button>
+            <button class="ai" id = "meteorstrikeIcon"><img src = "src/meteorstrikeIcon.svg"> </button>
+        </div>
+        <h3 id="weatherEventIconText">Weather event</h3> 
+        <div id = "weatherEventIcon">
+            <button class="ai" id = "sandstormIcon"><img src = "src/sandstormIcon.svg"> </button>
+            <button class="ai" id = "snowIcon"><img src = "src/snowIcon.svg"> </button>
+            <button class="ai" id = "rainIcon"><img src = "src/rainIcon.svg"> </button>
+            <button class="ai" id = "windIcon"><img src = "src/windIcon.svg"> </button>
+            <button class="ai" id = "sunIcon"><img src = "src/sunIcon.svg"> </button>
+        </div>
+       
+        <h3 id="volcanoIconText">Volcano eruption</h3> 
+        <div id = "volcanoIconDiv">
+            <button class="ai" id = "volcanoIcon"><img src = "src/volcanoIcon.svg"></button> 
+        </div>
+      </div>
+
 
 	</body>
 </html>

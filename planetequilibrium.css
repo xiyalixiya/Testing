@@ -23,6 +23,12 @@
 body{
     background: linear-gradient(45deg, rgb(255, 253, 232), rgb(211, 248, 255));
     cursor: url('src/cursor.svg'),auto;
+    width:100%;
+    overflow-x:hidden;
+}
+
+button:hover{
+    cursor: url('src/pointer.svg'),auto;
 }
 
 #backdrop{
@@ -31,6 +37,14 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     position:absolute;
+}
+
+#sliderTipBox{
+    position:absolute;
+    width: 50px;
+    height: 750px;
+    margin-left: 50px;
+    margin-top: 180px;
 }
 
 input[type="range"]{
@@ -368,3 +382,60 @@ input[type="radio"]:hover{
     margin-left: 10px;
     margin-top: 602px;
 }
+
+#animationIcon{
+    visibility: hidden;
+    position: absolute;
+    margin-left: 1950px;
+    margin-top: 880px;
+    width: 300px;
+}
+
+
+
+.ai{
+    border: none;
+    background-color: transparent;
+}
+
+#sliderTip{
+    visibility: hidden;
+    position: absolute;
+    margin-left: 45px;
+    margin-top: 955px;
+}
+
+#naturalEventIcon{
+    position:relative;
+    margin-top: -40px;
+}
+
+#weatherEventIcon{
+    position:relative;
+    margin-top: -40px;
+}
+
+
+
+#volcanoIconDiv{
+    position:relative;
+    margin-top: -30px;
+}
+
+#naturalEventIconText{
+    position:relative;
+    margin-left: -120px;
+}
+
+#weatherEventIconText{
+    position:relative;
+    margin-left: -120px;
+    margin-top: 20px;
+}
+
+#volcanoIconText{
+    position:relative;
+    margin-left: -143px;
+}
+
+

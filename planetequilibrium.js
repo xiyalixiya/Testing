@@ -115,6 +115,101 @@ const lowLevelAnimal = ['#B49A79', '#AC7C94', '#B1B178', '#BCA395', '#98C9B2', '
 const highLevelAnimal = ['#D3FA20', '#F7B333', '#37BFFA', '#F741C6', '#21F5E5', '#23EF8A', '#B42BF0', '#F2F211', '#FF9F4D', '#5C62FF', '#F23082'];
 
 
+
+//animation Icon
+
+let animationOn = false;
+let sliderTip = document.querySelector('#sliderTip');
+let sliderTipBox = document.querySelector('#sliderTipBox');
+let animationR1 = true;
+let animationIcon = document.querySelector('#animationIcon');
+sliderTipBox.onmouseover = function(){
+	if(animationOn){
+		sliderTip.style.visibility = 'visible';
+	}
+}
+
+sliderTipBox.onmouseout = function(){
+	sliderTip.style.visibility = 'hidden';
+}
+
+let earthquakeIcon = document.querySelector('#earthquakeIcon');
+let hurricaneIcon = document.querySelector('#hurricaneIcon');
+let wildfireIcon = document.querySelector('#wildfireIcon');
+let meteorstrikeIcon = document.querySelector('#meteorstrikeIcon');
+
+let sandstormIcon = document.querySelector('#sandstormIcon');
+let snowIcon = document.querySelector('#snowIcon');
+let rainIcon = document.querySelector('#rainIcon');
+let windIcon = document.querySelector('#windIcon');
+let sunIcon = document.querySelector('#sunIcon');
+
+let volcanoIcon = document.querySelector('#volcanoIcon');
+
+earthquakeIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	earthquakeStart();
+	earthquakeStop();
+}
+hurricaneIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	hurricaneStart();
+	hurricaneStop();
+}
+wildfireIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	wildfireStart();
+	wildfireStop();
+}
+meteorstrikeIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	meteorstrikeStart();
+	meteorstrikeStop();
+}
+
+sandstormIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	sandstormStart();
+	sandstormStop();
+}
+snowIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	snowStart();
+	snowStop();
+}
+rainIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	rainStart();
+	rainStop();
+}
+windIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	windStart();
+	windStop();
+}
+sunIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	sunStart();
+	sunStop();
+}
+
+volcanoIcon.onclick = function(){
+	planetStateControl.disabled = true;
+	animationIcon.style.visibility = 'hidden';
+	volcanoStart();
+	volcanoStop();
+}
+
+
 // load game elements
 
 let mixer = [];
@@ -1782,6 +1877,7 @@ function earthquakeStart(){
 	document.body.style.background = 'linear-gradient(45deg, rgb(41, 64, 46), rgb(68, 60, 26))';
 
 	earthquakeStarted = true;
+	animationOn = true;
 
 	if(playSound){
 		earthquakeSound.play();
@@ -1824,6 +1920,11 @@ function earthquakeStop(){
 		animalLabel.style.visibility = 'hidden'; 
 		clearInterval(timer);
 		document.body.style.background = defaultBackground;
+		animationOn = false;
+		if(!animationR1){
+			planetStateControl.disabled = false;
+			animationIcon.style.visibility = 'visible';
+		}
 		
 		sphereOcean.position.x = 0;
 		sphereOcean.position.y = 0;
@@ -1860,6 +1961,7 @@ function earthquakeStop(){
 	animalLabel.setAttribute("src", "src/hurricaneDead.svg");
 	animalLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(61, 39, 80), rgb(47, 63, 114))';
+	animationOn = true;
 	
 
 	scene.getObjectByName("hurricane").visible = true;
@@ -1912,6 +2014,11 @@ function earthquakeStop(){
 			animalLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			animationOn = false;
+			if(!animationR1){
+				planetStateControl.disabled = false;
+				animationIcon.style.visibility = 'visible';
+			}
 
 			for(var aa = 0; aa < 8; aa++){
 				scene.remove(scene.getObjectByName('dead'));
@@ -1930,6 +2037,7 @@ function earthquakeStop(){
 	animalLabel.style.visibility = 'visible'; 
 	EimpactDrop.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(163, 131, 107), rgb(201, 101, 86))';
+	animationOn = true;
 
 
 
@@ -1995,6 +2103,11 @@ function earthquakeStop(){
 			EimpactDrop.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			animationOn = false;
+			if(!animationR1){
+				planetStateControl.disabled = false;
+				animationIcon.style.visibility = 'visible';
+			}
 
 			scene.fog = null;
 
@@ -2200,6 +2313,7 @@ function wildfireStart(){
 	scene.remove(directionalLight2);
 	scene.remove(hemisphereLight);
 	fireStarted = true;
+	animationOn = true;
 
   for(var i = 0; i < 10; i++){
 	var fire = new THREE.SphereGeometry( .2, 150, 150 ); 
@@ -2282,6 +2396,11 @@ function wildfireStop(){
 		theme.volume = 1.0;
 		clearInterval(timer);
 		document.body.style.background = defaultBackground;
+		animationOn = false;
+		if(!animationR1){
+			planetStateControl.disabled = false;
+			animationIcon.style.visibility = 'visible';
+		}
 
 		for(var aa = 0; aa < 5; aa++){
 			scene.remove(scene.getObjectByName('dead'));
@@ -2301,6 +2420,7 @@ function wildfireStop(){
 	animalLabel.setAttribute("src", "src/meteorstrikeDead.svg");
 	animalLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(4, 44, 12), rgb(11, 20, 83))';
+	animationOn = true;
 	
 
 	ambientLight.intensity = 0.5;
@@ -2379,6 +2499,11 @@ function wildfireStop(){
 			animalLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			animationOn = false;
+			if(!animationR1){
+				planetStateControl.disabled = false;
+				animationIcon.style.visibility = 'visible';
+			}
 
 			for(var aa = 0; aa < 8; aa++){
 				scene.remove(scene.getObjectByName('dead'));
@@ -2406,6 +2531,7 @@ function wildfireStop(){
 	podLabel.setAttribute("src", "src/podActionSandstorm.svg");
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(193, 193, 178), rgb(212, 192, 147))';
+	animationOn = true;
 
 	if(playSound){
 	sandstormSound.play();
@@ -2483,6 +2609,10 @@ function wildfireStop(){
 			podLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			animationOn = false;
+			if(!animationR1){
+				animationIcon.style.visibility = 'visible';
+			}
 
 			sandGroup.vertices.forEach(function(a){
 				a.y = Math.floor(Math.random()*160)-80;
@@ -2507,6 +2637,7 @@ function wildfireStop(){
 	podLabel.setAttribute("src", "src/podActionSnow.svg");
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(171, 158, 165), rgb(128, 157, 208))';
+	animationOn = true;
 
 	snowStarted = true;
 	let snowflake;
@@ -2594,6 +2725,10 @@ function wildfireStop(){
 			podLabel.style.visibility = 'hidden'; 
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
+			animationOn = false;
+			if(!animationR1){
+				animationIcon.style.visibility = 'visible';
+			}
 
 			snowGroup.vertices.forEach(function(a){
 				a.y = Math.floor(Math.random()*160)-80;
@@ -2621,6 +2756,7 @@ function wildfireStop(){
 	podLabel.setAttribute("src", "src/podActionRain.svg");
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(181, 165, 154), rgb(142, 193, 204))';
+	animationOn = true;
 
 	rainStarted = true;
 	let rainDrops;
@@ -2712,6 +2848,10 @@ function wildfireStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 			planetStateControl.disabled = false;
+			animationOn = false;
+			if(!animationR1){
+				animationIcon.style.visibility = 'visible';
+			}
 
 			rainGroup.vertices.forEach(function(a){
 				a.y = Math.floor(Math.random()*160)-80;
@@ -2737,6 +2877,7 @@ function wildfireStop(){
 	podLabel.setAttribute("src", "src/podActionWind.svg");
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(223, 219, 247), rgb(234, 255, 246))';
+	animationOn = true;
 
 	if(playSound){
 	windSound.play();
@@ -2825,6 +2966,10 @@ function wildfireStop(){
 			clearInterval(timer);
 			document.body.style.background = defaultBackground;
 			planetStateControl.disabled = false;
+			animationOn = false;
+			if(!animationR1){
+				animationIcon.style.visibility = 'visible';
+			}
 		}
 	}, 1000);
 	}
@@ -2848,6 +2993,7 @@ function wildfireStop(){
 	podLabel.setAttribute("src", "src/podActionSun.svg");
 	podLabel.style.visibility = 'visible'; 
 	document.body.style.background = 'linear-gradient(45deg, rgb(255, 223, 163), rgb(255, 198, 235))';
+	animationOn = true;
 
 	ambientLight.intensity = 0.9;
 	scene.remove(directionalLight1);
@@ -2928,6 +3074,11 @@ function wildfireStop(){
 			document.body.style.background = defaultBackground;
 			planetStateControl.disabled = false;
 			sunCount = 0.0;
+			animationOn = false;
+
+			if(!animationR1){
+				animationIcon.style.visibility = 'visible';
+			}
 
 
 			for(var aa = 0; aa < 7; aa++){
@@ -2937,6 +3088,8 @@ function wildfireStop(){
 
 	cc.style.visibility = 'visible';
 	ccBuild.style.visibility = 'visible';
+	animationR1 = false;
+	animationIcon.style.visibility = 'visible';
 
 		}
 	}, 1000);
@@ -3046,7 +3199,7 @@ planetStateControl.oninput = function(){
 	// Epsilon - Earthquake - Sandstorm
 	if(planetStateControl.value == 1){
 
-	planetStateControl.disabled = true;
+	
 	planetState.setAttribute("src", "src/epsilon.svg");
 	volcanoAnalytics.setAttribute("src", "src/volcanoEpsilon.svg");
 	ner.textContent = '8';
@@ -3095,28 +3248,33 @@ planetStateControl.oninput = function(){
 		}
 	}
 
-	let count = 36;
-	let timer = setInterval(function () {
-	count--;
-	if (count == 33) {
-		earthquakeStart();
-		earthquakeStop();
-	} 
-	if(count == 15){
-		sandstormStart();
-		sandstormStop();
+	if(animationR1){
+		planetStateControl.disabled = true;
+		let count = 36;
+		let timer = setInterval(function () {
+		count--;
+		if (count == 33) {
+			earthquakeStart();
+			earthquakeStop();
+		} 
+		if(count == 15){
+			sandstormStart();
+			sandstormStop();
+		}
+	
+		if (count == 0){
+			clearInterval(timer);
+		}
+	
+	}, 1000);
 	}
 
-	if (count == 0){
-		clearInterval(timer);
-	}
-
-}, 1000);
+	
 
 
 	} else if(planetStateControl.value == 2){
 
-	planetStateControl.disabled = true;
+	
 		planetState.setAttribute("src", "src/delta.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoDelta.svg");
 		ner.textContent = '5';
@@ -3166,7 +3324,8 @@ planetStateControl.oninput = function(){
 
 
 
-
+if(animationR1){
+	planetStateControl.disabled = true;
 	let count = 36;
 	let timer = setInterval(function () {
 	count--;
@@ -3182,10 +3341,12 @@ planetStateControl.oninput = function(){
 		clearInterval(timer);
 	}
 	}, 1000);
+}
+	
 
 	} else if(planetStateControl.value == 3){
 
-	planetStateControl.disabled = true;
+	
 		planetState.setAttribute("src", "src/gamma.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoGamma.svg");
 		ner.textContent = '4';
@@ -3234,30 +3395,34 @@ planetStateControl.oninput = function(){
 		}
 	}
 
-
-	let count = 36;
-	let timer = setInterval(function () {
-	count--;
-	if (count == 33) {
-		volcanoStart();
-		volcanoStop();
-	} 
+	if(animationR1){
+		planetStateControl.disabled = true;
+		let count = 36;
+		let timer = setInterval(function () {
+		count--;
+		if (count == 33) {
+			volcanoStart();
+			volcanoStop();
+		} 
+		
+		if(count == 15){
+			rainStart();
+			rainStop();
+		}
 	
-	if(count == 15){
-		rainStart();
-		rainStop();
+		if (count == 0){
+			clearInterval(timer);
+		}
+	
+		}, 1000);
+	
 	}
 
-	if (count == 0){
-		clearInterval(timer);
-	}
-
-	}, 1000);
-
+	
 
 	} else if (planetStateControl.value == 4){
 
-	planetStateControl.disabled = true;
+	
 		planetState.setAttribute("src", "src/beta.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoBeta.svg");
 		ner.textContent = '3';
@@ -3306,31 +3471,35 @@ planetStateControl.oninput = function(){
 		}
 	}
 
-
-	let count = 36;
-	let timer = setInterval(function () {
-	count--;
-	if (count == 33) {
-		wildfireStart();
-		wildfireStop();
-	} 
+	if(animationR1){
+		planetStateControl.disabled = true;
+		let count = 36;
+		let timer = setInterval(function () {
+		count--;
+		if (count == 33) {
+			wildfireStart();
+			wildfireStop();
+		} 
+		
+		if(count == 15){
 	
-	if(count == 15){
-
-		windStart();
-		windStop();
-
+			windStart();
+			windStop();
+	
+		}
+	
+		if (count == 0){
+			clearInterval(timer);
+		}
+	
+	}, 1000);
 	}
 
-	if (count == 0){
-		clearInterval(timer);
-	}
-
-}, 1000);
+	
 
 	} else {
 
-	planetStateControl.disabled = true;
+
 		planetState.setAttribute("src", "src/alpha.svg");
 		volcanoAnalytics.setAttribute("src", "src/volcanoAlpha.svg");
 		ner.textContent = '2';
@@ -3378,8 +3547,9 @@ planetStateControl.oninput = function(){
 			}
 		}
 
-
-	let count = 36;
+		if(animationR1){
+			planetStateControl.disabled = true;
+			let count = 36;
 	let timer = setInterval(function () {
 	count--;
 	if (count == 33) {
@@ -3397,6 +3567,9 @@ planetStateControl.oninput = function(){
 	}
 
 }, 1000);
+
+		}
+
 
 
 
@@ -3418,6 +3591,7 @@ var ccStart = false;
 
 ccBuild.onclick = function(){
 	ccStart = true;
+	animationIcon.style.visibility = 'hidden';
 	cc.style.visibility = 'hidden';
 	ccBuild.style.visibility = 'hidden';
 	ccTip.style.visibility = 'visible';
@@ -3427,6 +3601,7 @@ ccBuild.onclick = function(){
 
 ccFinish.onclick = function(){
 	ccStart = false;
+	animationIcon.style.visibility = 'visible';
 	cc.style.visibility = 'visible';
 	ccBuild.style.visibility = 'visible';
 	ccTip.style.visibility = 'hidden';
@@ -3556,7 +3731,10 @@ window.addEventListener('pointerup', event =>{
 
 	if(pointer.x == mouseLocation && picked == false){
 	
-	if(intersects.length > 0){
+	if(intersects.length > 0 && !animationOn && !ccStart){
+		cc.style.visibility = 'hidden';
+		ccBuild.style.visibility = 'hidden';
+		animationIcon.style.visibility = 'hidden';
 		volcanoAnalytics.style.visibility = 'visible';
 		close.style.visibility = 'visible';
 		renderer.render( scene, camera ); 
@@ -3618,6 +3796,13 @@ window.addEventListener('pointerup', event =>{
 	close.onclick = function(){
 		volcanoAnalytics.style.visibility = 'hidden';
 		close.style.visibility = 'hidden';
+
+			if(!animationR1 &&  !ccStart){
+		cc.style.visibility = 'visible';
+		ccBuild.style.visibility = 'visible';
+		animationIcon.style.visibility = 'visible';
+			}
+		
 	}
 
 
@@ -3686,6 +3871,22 @@ function animate() {
 
 
 	}
+
+
+	if(animationOn){
+		sliderTipBox.style.visibility = 'visible';
+	cc.style.visibility = 'hidden';
+	ccBuild.style.visibility = 'hidden';
+	volcanoAnalytics.style.visibility = 'hidden';
+		close.style.visibility = 'hidden';
+	} else {
+		sliderTipBox.style.visibility = 'hidden';
+		if(!animationR1 &&  !ccStart && volcanoAnalytics.style.visibility == 'hidden'){
+	cc.style.visibility = 'visible';
+	ccBuild.style.visibility = 'visible';
+		}
+	}
+
 
 	if(fireStarted){
 		timeElapsed = new Date();

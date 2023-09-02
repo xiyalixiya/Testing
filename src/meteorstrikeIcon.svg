@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36" viewBox="0 0 36 36">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#6cfc6c" stop-opacity="0"/>
+      <stop offset="0.493" stop-color="#6cfc6c" stop-opacity="0.494"/>
+      <stop offset="0.773" stop-color="#91e1f8" stop-opacity="0.773"/>
+      <stop offset="1" stop-color="#ee91ff"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_381" data-name="Group 381" transform="translate(817 -2675)">
+    <circle id="Ellipse_252" data-name="Ellipse 252" cx="18" cy="18" r="18" transform="translate(-817 2675)" fill="none"/>
+    <g id="Group_90" data-name="Group 90" transform="translate(-2538.217 2543.785)">
+      <path id="Path_76" data-name="Path 76" d="M2.834,0C4.4,0,5.668,8.66,5.668,11.227S4.4,15.876,2.834,15.876,0,13.795,0,11.227,1.269,0,2.834,0Z" transform="matrix(0.559, 0.829, -0.829, 0.559, 1750.201, 135.814)" fill="url(#linear-gradient)"/>
+      <path id="Path_78" data-name="Path 78" d="M2.653,0C4.118,0,5.305,8.555,5.305,11.091s-1.188,4.593-2.653,4.593S0,13.628,0,11.091,1.188,0,2.653,0Z" transform="translate(1750.137 146.446) rotate(48)" fill="url(#linear-gradient)"/>
+      <path id="Path_81" data-name="Path 81" d="M1.762,0c.973,0,1.762,8.555,1.762,11.091s-.789,4.593-1.762,4.593S0,13.628,0,11.091.789,0,1.762,0Z" transform="translate(1744.325 144.831) rotate(48)" fill="url(#linear-gradient)"/>
+      <path id="Path_79" data-name="Path 79" d="M1.421,0c.785,0,1.421,6.9,1.421,8.945s-.636,3.7-1.421,3.7S0,10.99,0,8.945.636,0,1.421,0Z" transform="translate(1738.71 153.772) rotate(49)" fill="url(#linear-gradient)"/>
+      <path id="Path_82" data-name="Path 82" d="M1.421,0c.785,0,1.421,6.9,1.421,8.945s-.636,3.7-1.421,3.7S0,10.99,0,8.945.636,0,1.421,0Z" transform="translate(1737.811 144.676) rotate(49)" fill="url(#linear-gradient)"/>
+      <path id="Path_83" data-name="Path 83" d="M1.175,0c.649,0,1.175,5.7,1.175,7.394s-.526,3.062-1.175,3.062S0,9.085,0,7.394.526,0,1.175,0Z" transform="translate(1733.563 149.898) rotate(49)" fill="url(#linear-gradient)"/>
+      <path id="Path_80" data-name="Path 80" d="M1,0c.554,0,1,4.874,1,6.32s-.45,2.617-1,2.617S0,7.765,0,6.32.45,0,1,0Z" transform="matrix(0.682, 0.731, -0.731, 0.682, 1739.205, 137.112)" fill="url(#linear-gradient)"/>
+      <path id="Path_77" data-name="Path 77" d="M1.76,0c.972,0,1.76,8.66,1.76,11.227s-.788,4.649-1.76,4.649S0,13.795,0,11.227.788,0,1.76,0Z" transform="matrix(0.616, 0.788, -0.788, 0.616, 1740.041, 136.843)" fill="url(#linear-gradient)"/>
+    </g>
+  </g>
+</svg>

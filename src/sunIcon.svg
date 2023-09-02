@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+  <g id="Group_379" data-name="Group 379" transform="translate(814 -2730)">
+    <circle id="Ellipse_246" data-name="Ellipse 246" cx="18" cy="18" r="18" transform="translate(-814 2730)" fill="none"/>
+    <g id="Group_81" data-name="Group 81" transform="translate(-2430.658 2492.702)">
+      <g id="Group_79" data-name="Group 79" transform="translate(1625.066 245.516) rotate(45)">
+        <line id="Line_9" data-name="Line 9" x2="1.959" transform="translate(25.462)" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_10" data-name="Line 10" x2="1.959" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+      </g>
+      <g id="Ellipse_60" data-name="Ellipse 60" transform="translate(1625.946 246.397)" fill="none" stroke="#4ff7b9" stroke-width="3">
+        <circle cx="8.814" cy="8.814" r="8.814" stroke="none"/>
+        <circle cx="8.814" cy="8.814" r="7.314" fill="none"/>
+      </g>
+      <g id="Group_77" data-name="Group 77" transform="translate(1621.05 255.21)">
+        <line id="Line_9-2" data-name="Line 9" x2="1.959" transform="translate(25.462)" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_10-2" data-name="Line 10" x2="1.959" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+      </g>
+      <g id="Group_78" data-name="Group 78" transform="translate(1634.761 241.5) rotate(90)">
+        <line id="Line_9-3" data-name="Line 9" x2="1.959" transform="translate(25.462)" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_10-3" data-name="Line 10" x2="1.959" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+      </g>
+      <g id="Group_80" data-name="Group 80" transform="translate(1644.455 245.516) rotate(135)">
+        <line id="Line_9-4" data-name="Line 9" x2="1.959" transform="translate(25.462 0)" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_10-4" data-name="Line 10" x2="1.959" transform="translate(0 0)" fill="none" stroke="#4ff7b9" stroke-linecap="round" stroke-width="3"/>
+      </g>
+    </g>
+  </g>
+</svg>
